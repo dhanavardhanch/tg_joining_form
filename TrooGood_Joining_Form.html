@@ -2898,12 +2898,10 @@
       sizePad();
 
       /* ===================================================================
-         LOOKUP SHEET â€” loads Units, Designations, Managers, Contractors
-         Spreadsheet: TrooGood Onboarding 2026-27
-         Tab gid: 1461658980   Columns: A=Units B=Designations C=Manager D=Contractor
+         LOOKUP DATA — fetched privately via Apps Script (?action=lookup)
+         The Google Sheet stays private; no public sharing needed.
+         Apps Script runs as the owner and reads the Lookup tab.
          =================================================================== */
-      var LOOKUP_SHEET_ID = "1f8q5GnuMqrl0Pnu5a8wMJO3RX6QKSsJWLM7omQDuU";
-      var LOOKUP_GID      = "1461658980";
 
       function populateDynField(selEl, inpEl, values, ph) {
         if (!selEl || !inpEl) return;
@@ -2912,7 +2910,7 @@
           inpEl.style.display=""; selEl.style.display="none";
           selEl.disabled=true; inpEl.disabled=false;
         } else {
-          selEl.innerHTML = "<option value=\"\">" + ph + "</option>";
+          selEl.innerHTML = '<option value="">' + ph + '</option>';
           clean.forEach(function(v){
             var o=document.createElement("option");
             o.value=v.trim(); o.textContent=v.trim();
@@ -2923,61 +2921,43 @@
         }
       }
 
+      function applyLookup(d) {
+        var uSel = document.getElementById("unitSelect");
+        if (uSel && d.units && d.units.length > 0) {
+          uSel.innerHTML = '<option value="">Select your unit</option>';
+          d.units.forEach(function(v){
+            var o=document.createElement("option"); o.value=v; o.textContent=v;
+            uSel.appendChild(o);
+          });
+          uSel.style.display="";
+        } else if (uSel && uSel.tagName === "SELECT") {
+          var inp=document.createElement("input");
+          inp.type="text"; inp.name="unit"; inp.id="unitSelect";
+          inp.placeholder="Enter your unit";
+          if (uSel.parentNode) uSel.parentNode.replaceChild(inp, uSel);
+        }
+        populateDynField(document.getElementById("desigSelect"),    document.getElementById("desigInput"),    d.designations||[], "Select your designation");
+        populateDynField(document.getElementById("reportingSelect"),document.getElementById("reportingInput"),d.managers||[],     "Select your manager");
+        populateDynField(document.getElementById("vendorSelect"),   document.getElementById("vendorInput"),   d.contractors||[], "Select contractor");
+        restoreDraft();
+      }
+
       function loadLookupData() {
-        var csvUrl = "https://docs.google.com/spreadsheets/d/" + LOOKUP_SHEET_ID +
-                     "/export?format=csv&gid=" + LOOKUP_GID;
-        fetch(csvUrl)
-          .then(function(r){ return r.ok ? r.text() : ""; })
-          .catch(function(){ return ""; })
-          .then(function(text) {
-            var units=[],desigs=[],managers=[],contractors=[];
-            if (text && text.trim()) {
-              var rows = text.trim().split("\n");
-              for (var i=1; i<rows.length; i++) {
-                var cols = rows[i].split(",").map(function(c){
-                  return (c||"").replace(/^"|"$/g,"").trim();
-                });
-                if(cols[0]) units.push(cols[0]);
-                if(cols[1]) desigs.push(cols[1]);
-                if(cols[2]) managers.push(cols[2]);
-                if(cols[3]) contractors.push(cols[3]);
-              }
+        var scriptUrl = (SUBMIT_URL || localStorage.getItem("troogood_submit_url") || "").trim();
+        if (!scriptUrl) {
+          applyLookup({ units:[], designations:[], managers:[], contractors:[] });
+          return;
+        }
+        var lookupUrl = scriptUrl + "?action=lookup";
+        fetch(lookupUrl)
+          .then(function(r){ return r.ok ? r.json() : {}; })
+          .catch(function(){ return {}; })
+          .then(function(data) {
+            if (data && data.ok) {
+              applyLookup(data);
+            } else {
+              applyLookup({ units:[], designations:[], managers:[], contractors:[] });
             }
-            // Unit
-            var uSel = document.getElementById("unitSelect");
-            if (uSel) {
-              if (units.length > 0) {
-                uSel.innerHTML = "<option value=\"\">Select your unit</option>";
-                units.forEach(function(v){
-                  var o=document.createElement("option"); o.value=v; o.textContent=v;
-                  uSel.appendChild(o);
-                });
-              } else if (uSel.tagName === "SELECT") {
-                var inp=document.createElement("input");
-                inp.type="text"; inp.name="unit"; inp.id="unitSelect";
-                inp.placeholder="Enter your unit";
-                if (uSel.parentNode) uSel.parentNode.replaceChild(inp, uSel);
-              }
-            }
-            // Designation
-            populateDynField(
-              document.getElementById("desigSelect"),
-              document.getElementById("desigInput"),
-              desigs, "Select your designation"
-            );
-            // Reporting Manager
-            populateDynField(
-              document.getElementById("reportingSelect"),
-              document.getElementById("reportingInput"),
-              managers, "Select your manager"
-            );
-            // Contractor
-            populateDynField(
-              document.getElementById("vendorSelect"),
-              document.getElementById("vendorInput"),
-              contractors, "Select contractor"
-            );
-            restoreDraft();
           });
       }
 
