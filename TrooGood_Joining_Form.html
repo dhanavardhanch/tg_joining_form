@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--
   TrooGood / Mformillet Foods Pvt Ltd — Employee Onboarding & Joining Portal
   ==========================================================================
@@ -1181,30 +1181,32 @@
                 <input type="date" name="doj">
                 <p class="err">Enter the date you started work.</p>
               </label>
-              <label class="f" data-v="req"><span class="lab"><b>Unit you work at</b><span class="req">*</span></span>
-                <select name="unit">
-                  <option value="">Select your unit</option>
-                  <option>TGK-1</option>
-                  <option>TGK-2</option>
-                  <option>TGK-3</option>
-                  <option>TGK-4</option>
-                  <option>TGK-5</option>
-                  <option>TGR</option>
-                  <option>Corporate</option>
-                  <option>Institutional</option>
-                  <option>Retail Sales</option>
+              <!-- Unit â€” populated from Lookup sheet col A -->
+              <label class="f" data-v="req" id="unitWrap"><span class="lab"><b>Unit you work at</b><span class="req">*</span></span>
+                <select name="unit" id="unitSelect">
+                  <option value="">Loading\u2026</option>
                 </select>
                 <p class="err">Select the unit you work at.</p>
               </label>
-              <label class="f" data-v="req"><span class="lab"><b>Your role / Designation</b><span
-                    class="req">*</span></span>
-                <input type="text" name="desig" placeholder="e.g. Helper, Roller, Sales Champ, Executive">
+              </label>
+              <!-- Designation â€” populated from Lookup sheet col B -->
+              <div class="f" data-v="req" id="desigWrap"><span class="lab"><b>Your role / Designation</b><span class="req">*</span></span>
+                <select name="desig" id="desigSelect" style="display:none">
+                  <option value="">Select your designation</option>
+                </select>
+                <input type="text" name="desig" id="desigInput" placeholder="e.g. Helper, Roller, Sales Champ, Executive" style="display:none">
                 <p class="err">Enter your role or designation.</p>
+              </div>
               </label>
               <label class="f"><span class="lab"><b>Department or line</b></span>
                 <input type="text" name="dept" placeholder="e.g. Bars line, Chikki line, Stores, Quality"></label>
-              <label class="f"><span class="lab"><b>Who you report to</b></span>
-                <input type="text" name="reporting" placeholder="Name of your supervisor / manager"></label>
+              <!-- Reporting Manager â€” populated from Lookup sheet col C -->
+              <div class="f" id="reportingWrap"><span class="lab"><b>Who you report to</b></span>
+                <select name="reporting" id="reportingSelect" style="display:none">
+                  <option value="">Select your manager</option>
+                </select>
+                <input type="text" name="reporting" id="reportingInput" placeholder="Name of your supervisor / manager" style="display:none">
+              </div>
             </div>
           </fieldset>
           <fieldset>
@@ -1221,8 +1223,14 @@
               <p class="err">Please choose one engagement type.</p>
             </div>
             <div class="grid two" style="margin-top:16px">
-              <label class="f hide" id="vendorWrap"><span class="lab"><b>Contractor / Agency name</b></span>
-                <input type="text" name="vendor" placeholder="e.g. Rubicon, Baba, GS Manpower, Max"></label>
+              <!-- Contractor â€” populated from Lookup sheet col D; required when Through contractor selected -->
+              <div class="f hide" id="vendorWrap"><span class="lab"><b>Contractor / Agency name</b><span class="req">*</span></span>
+                <select name="vendor" id="vendorSelect" style="display:none">
+                  <option value="">Select contractor</option>
+                </select>
+                <input type="text" name="vendor" id="vendorInput" placeholder="e.g. Rubicon, Baba, GS Manpower, Max" style="display:none">
+                <p class="err">Please enter the contractor / agency name.</p>
+              </div>
               <label class="f"><span class="lab"><b>Shift timing</b></span>
                 <select name="shift">
                   <option value="">Select shift</option>
@@ -1548,6 +1556,22 @@
             <div class="grid two">
               <label class="f"><span class="lab"><b>ESIC insurance number (IP number)</b></span>
                 <input type="text" name="esic" class="mono" placeholder="Leave blank if newly enrolling"></label>
+
+              <!-- Health Insurance -->
+              <div class="f" data-v="req" data-name="health_ins">
+                <span class="lab"><b>Do you have Health Insurance?</b><span class="req">*</span></span>
+                <div class="choice-set" role="radiogroup" aria-label="Health Insurance">
+                  <label class="choice"><input type="radio" name="health_ins" value="No"><span>No</span></label>
+                  <label class="choice"><input type="radio" name="health_ins" value="Yes"><span>Yes</span></label>
+                </div>
+                <p class="err">Please select an option.</p>
+              </div>
+              <div id="healthInsWrap" class="hide" style="grid-column:1/-1">
+                <label class="f" data-v="req"><span class="lab"><b>Health Insurance Number</b><span class="req">*</span></span>
+                  <input type="text" name="health_ins_no" class="mono" placeholder="Enter your health insurance policy number">
+                  <p class="err">Please enter your health insurance number.</p>
+                </label>
+              </div>
               <label class="f"><span class="lab"><b>Are you an international / foreign worker?</b></span>
                 <select name="intl">
                   <option>No</option>
@@ -2012,7 +2036,13 @@
     form.addEventListener("change", function (e) {
       var n = e.target.name;
       if (n === "engagement") {
-        $("#vendorWrap").classList.toggle("hide", radio("engagement") !== "Vendor / contractor");
+        var isVendor = radio("engagement") === "Vendor / contractor";
+        $("#vendorWrap").classList.toggle("hide", !isVendor);
+        var vw = $("#vendorWrap");
+        if (isVendor) { vw.setAttribute("data-v", "req"); } else { vw.removeAttribute("data-v"); }
+      }
+      if (n === "health_ins") {
+        $("#healthInsWrap").classList.toggle("hide", radio("health_ins") !== "Yes");
       }
       if (n === "worked") {
         $("#prevWrap").classList.toggle("hide", radio("worked") !== "Yes");
@@ -2866,7 +2896,94 @@
         today.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) + ".";
 
       sizePad();
-      restoreDraft();
+
+      /* ===================================================================
+         LOOKUP SHEET â€” loads Units, Designations, Managers, Contractors
+         Spreadsheet: TrooGood Onboarding 2026-27
+         Tab gid: 1461658980   Columns: A=Units B=Designations C=Manager D=Contractor
+         =================================================================== */
+      var LOOKUP_SHEET_ID = "1f8q5GnuMqrl0Pnu5a8wMJO3RX6QKSsJWLM7omQDuU";
+      var LOOKUP_GID      = "1461658980";
+
+      function populateDynField(selEl, inpEl, values, ph) {
+        if (!selEl || !inpEl) return;
+        var clean = (values||[]).filter(function(v){return v&&v.trim();});
+        if (clean.length === 0) {
+          inpEl.style.display=""; selEl.style.display="none";
+          selEl.disabled=true; inpEl.disabled=false;
+        } else {
+          selEl.innerHTML = "<option value=\"\">" + ph + "</option>";
+          clean.forEach(function(v){
+            var o=document.createElement("option");
+            o.value=v.trim(); o.textContent=v.trim();
+            selEl.appendChild(o);
+          });
+          selEl.style.display=""; selEl.disabled=false;
+          inpEl.style.display="none"; inpEl.disabled=true; inpEl.value="";
+        }
+      }
+
+      function loadLookupData() {
+        var csvUrl = "https://docs.google.com/spreadsheets/d/" + LOOKUP_SHEET_ID +
+                     "/export?format=csv&gid=" + LOOKUP_GID;
+        fetch(csvUrl)
+          .then(function(r){ return r.ok ? r.text() : ""; })
+          .catch(function(){ return ""; })
+          .then(function(text) {
+            var units=[],desigs=[],managers=[],contractors=[];
+            if (text && text.trim()) {
+              var rows = text.trim().split("\n");
+              for (var i=1; i<rows.length; i++) {
+                var cols = rows[i].split(",").map(function(c){
+                  return (c||"").replace(/^"|"$/g,"").trim();
+                });
+                if(cols[0]) units.push(cols[0]);
+                if(cols[1]) desigs.push(cols[1]);
+                if(cols[2]) managers.push(cols[2]);
+                if(cols[3]) contractors.push(cols[3]);
+              }
+            }
+            // Unit
+            var uSel = document.getElementById("unitSelect");
+            if (uSel) {
+              if (units.length > 0) {
+                uSel.innerHTML = "<option value=\"\">Select your unit</option>";
+                units.forEach(function(v){
+                  var o=document.createElement("option"); o.value=v; o.textContent=v;
+                  uSel.appendChild(o);
+                });
+              } else if (uSel.tagName === "SELECT") {
+                var inp=document.createElement("input");
+                inp.type="text"; inp.name="unit"; inp.id="unitSelect";
+                inp.placeholder="Enter your unit";
+                if (uSel.parentNode) uSel.parentNode.replaceChild(inp, uSel);
+              }
+            }
+            // Designation
+            populateDynField(
+              document.getElementById("desigSelect"),
+              document.getElementById("desigInput"),
+              desigs, "Select your designation"
+            );
+            // Reporting Manager
+            populateDynField(
+              document.getElementById("reportingSelect"),
+              document.getElementById("reportingInput"),
+              managers, "Select your manager"
+            );
+            // Contractor
+            populateDynField(
+              document.getElementById("vendorSelect"),
+              document.getElementById("vendorInput"),
+              contractors, "Select contractor"
+            );
+            restoreDraft();
+          });
+      }
+
+      restoreDraft();      // immediate restore with current fields
+      loadLookupData();    // enrich with live sheet dropdowns
+      setInterval(loadLookupData, 5 * 60 * 1000); // refresh every 5 min
     })();
   </script>
 </body>
