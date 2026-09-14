@@ -1,0 +1,2665 @@
+<!DOCTYPE html>
+<!--
+  TrooGood / Mformillet Foods Pvt Ltd — Employee Onboarding & Joining Portal
+  ==========================================================================
+  CONNECTING TO GOOGLE SHEETS:
+  1. Open your Google Sheet.
+  2. Click Extensions > Apps Script.
+  3. Paste the contents of "TrooGood_Form_To_Google_Sheet.gs".
+  4. Click Deploy > New deployment > Select type "Web app".
+     - Execute as: "Me"
+     - Who has access: "Anyone"
+  5. Copy the Web App URL (ends with /exec).
+  6. Paste the URL into SUBMIT_URL below (line ~640) or use the "Google Sheet Settings" button in the form.
+-->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Employee Onboarding & Joining Form — TrooGood</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00B5E8;
+      --primary-hover: #0096c2;
+      --primary-light: #38cbf0;
+      --primary-subtle: #e6f8fd;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --accent-subtle: #f0f9ff;
+      --accent-border: #bae6fd;
+      --surface-bg: #f8fafc;
+      --surface-card: #ffffff;
+      --surface-field: #f8fafc;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text-head: #0f172a;
+      --text-body: #1e293b;
+      --text-muted: #64748b;
+      --danger: #dc2626;
+      --danger-subtle: #fef2f2;
+      --danger-border: #fecaca;
+      --success: #00B5E8;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 12px 24px -4px rgba(0, 181, 232, 0.14), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--surface-bg);
+      color: var(--text-body);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header Masthead */
+    .header-wrap {
+      background: linear-gradient(135deg, #00B5E8 0%, #0096c2 60%, #00779e 100%);
+      color: #ffffff;
+      padding: 24px 20px 20px;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0, 181, 232, 0.2);
+    }
+
+    .header-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 5px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .brand-tag .dot {
+      width: 7px;
+      height: 7px;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ffffff;
+    }
+
+    .cfg-btn {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .cfg-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .header-inner h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .header-inner p {
+      margin: 0;
+      color: #e0f7fd;
+      font-size: 14px;
+      max-width: 66ch;
+      line-height: 1.5;
+    }
+
+    /* Sticky Stepper Bar */
+    .rail-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .rail-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .rail-progress {
+      height: 3px;
+      background: #e2e8f0;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rail-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #00B5E8, #38cbf0);
+      width: 14.28%;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .rail-tabs {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 6px 0;
+    }
+
+    .rail-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .rail-tab {
+      flex: 0 0 auto;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .rail-tab:hover {
+      background: #f1f5f9;
+      color: var(--text-body);
+    }
+
+    .rail-tab .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .rail-tab[aria-current="true"] {
+      color: var(--primary);
+      background: var(--primary-subtle);
+    }
+
+    .rail-tab[aria-current="true"] .step-num {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .rail-tab.done .step-num {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    /* Main Container */
+    main {
+      max-width: 820px;
+      margin: 24px auto 120px;
+      padding: 0 16px;
+    }
+
+    /* Form Step Card */
+    .step {
+      display: none;
+      animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .step.on {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 28px 24px;
+      margin-bottom: 20px;
+    }
+
+    @media (min-width: 640px) {
+      .step-card {
+        padding: 36px 32px;
+      }
+    }
+
+    .step-header {
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .step-badge {
+      display: inline-block;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      background: var(--primary-subtle);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .step-header h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 750;
+      color: var(--text-head);
+      letter-spacing: -0.02em;
+    }
+
+    .step-header p {
+      margin: 6px 0 0;
+      color: var(--text-muted);
+      font-size: 14.5px;
+      line-height: 1.5;
+    }
+
+    /* Fieldsets & Grids */
+    fieldset {
+      border: none;
+      padding: 0;
+      margin: 0 0 28px 0;
+    }
+
+    fieldset:last-of-type {
+      margin-bottom: 0;
+    }
+
+    legend {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      padding: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      border-bottom: 1px dashed var(--border);
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .grid.two {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .wide {
+        grid-column: 1 / -1;
+      }
+    }
+
+    /* Form Fields */
+    label.f {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .f>span.lab {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-body);
+      margin-bottom: 6px;
+    }
+
+    .req {
+      color: var(--danger);
+      margin-left: 3px;
+      font-weight: 700;
+    }
+
+    input[type=text],
+    input[type=tel],
+    input[type=email],
+    input[type=date],
+    input[type=number],
+    select,
+    textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 14.5px;
+      color: var(--text-head);
+      background: var(--surface-field);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      min-height: 48px;
+      transition: all 0.2s ease;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+
+    textarea {
+      min-height: 84px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #94a3b8;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(0, 181, 232, 0.12);
+    }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      letter-spacing: 0.02em;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 5px 0 0 0;
+    }
+
+    .err {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--danger);
+      margin: 5px 0 0 0;
+      display: none;
+    }
+
+    .bad input,
+    .bad select,
+    .bad textarea,
+    .bad .choice-set {
+      border-color: var(--danger) !important;
+      background-color: var(--danger-subtle) !important;
+    }
+
+    .bad .err {
+      display: block;
+    }
+
+    /* Choice Chips (Radio Buttons) */
+    .choice-set {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 2px;
+    }
+
+    .choice {
+      position: relative;
+      cursor: pointer;
+      flex: 1 1 auto;
+      min-width: 120px;
+    }
+
+    .choice input {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .choice span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-body);
+      transition: all 0.18s ease;
+      text-align: center;
+      user-select: none;
+    }
+
+    .choice input:hover+span {
+      border-color: var(--border-strong);
+      background: #f8fafc;
+    }
+
+    .choice input:checked+span {
+      background: var(--primary-subtle);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 700;
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .choice input:focus-visible+span {
+      box-shadow: 0 0 0 3px rgba(0, 181, 232, 0.2);
+    }
+
+    /* Checkbox Chips (Documents) */
+    #docs .choice {
+      flex: 1 1 calc(33.333% - 10px);
+      min-width: 180px;
+    }
+
+    #docs .choice span {
+      justify-content: flex-start;
+      padding: 11px 14px;
+      font-size: 13.5px;
+    }
+
+    #docs .choice input:checked+span {
+      background: #e6f8fd;
+      border-color: var(--success);
+      color: #007ea3;
+      box-shadow: 0 0 0 1px var(--success);
+    }
+
+    /* Passport Photo Upload */
+    .photo-upload-wrap {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      background: #f8fafc;
+      border: 1.5px dashed var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .photo-preview-box {
+      width: 95px;
+      height: 120px;
+      flex: 0 0 95px;
+      border: 2px solid var(--primary);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .photo-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6px;
+    }
+
+    .photo-actions {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    @media (max-width: 520px) {
+      .photo-upload-wrap {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+      }
+
+      .photo-actions {
+        align-items: center;
+      }
+    }
+
+    /* Declarations */
+    .dec {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .dec:hover {
+      border-color: var(--border-strong);
+    }
+
+    .dec.pf {
+      background: var(--accent-subtle);
+      border-color: var(--accent-border);
+    }
+
+    .dec p.small {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin: 8px 0 0 34px;
+    }
+
+    .check {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+
+    .check input[type=checkbox] {
+      width: 20px;
+      height: 20px;
+      margin: 2px 0 0 0;
+      flex: 0 0 auto;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .check span {
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--text-head);
+      font-weight: 500;
+    }
+
+    /* Digital Signature */
+    .sig-wrap {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 180px;
+      background: #fafafa repeating-linear-gradient(to bottom, transparent, transparent 35px, #f1f5f9 35px, #f1f5f9 36px);
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .sig-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #f8fafc;
+      border-top: 1px dashed var(--border);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .linkbtn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .linkbtn:hover {
+      background: var(--primary-subtle);
+    }
+
+    /* Dynamic Family Member Row */
+    .fam-card {
+      background: #f8fafc;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .fam-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .fam-card-num {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+
+    .fam-remove-btn {
+      background: none;
+      border: none;
+      color: var(--danger);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .fam-remove-btn:hover {
+      background: var(--danger-subtle);
+    }
+
+    /* Review Summary Cards */
+    .rev {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      margin-bottom: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .rev h3 {
+      margin: 0;
+      font-size: 14.5px;
+      font-weight: 700;
+      padding: 12px 18px;
+      background: var(--primary-subtle);
+      color: var(--primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #bcecf8;
+    }
+
+    .rev dl {
+      margin: 0;
+      padding: 6px 18px 14px;
+    }
+
+    .rev div.r {
+      display: flex;
+      gap: 16px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+    }
+
+    .rev div.r:last-child {
+      border-bottom: none;
+    }
+
+    .rev dt {
+      flex: 0 0 40%;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .rev dd {
+      margin: 0;
+      flex: 1;
+      word-break: break-word;
+      color: var(--text-head);
+      font-weight: 600;
+    }
+
+    .rev dd.blank {
+      color: #94a3b8;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    /* Fixed Navigation Action Bar */
+    .bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.96);
+      border-top: 1px solid var(--border);
+      padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    .bar-in {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      padding: 13px 24px;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.18s ease;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: #ffffff;
+      flex: 1;
+      box-shadow: 0 2px 4px rgba(0, 181, 232, 0.2);
+    }
+
+    .btn.primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0, 181, 232, 0.25);
+    }
+
+    .btn.ghost {
+      background: #ffffff;
+      border-color: var(--border-strong);
+      color: var(--text-body);
+    }
+
+    .btn.ghost:hover {
+      background: #f8fafc;
+      border-color: var(--text-muted);
+    }
+
+    .btn[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .bar .count {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Done / Confirmation Screen */
+    .done {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .done.on {
+      display: block;
+    }
+
+    .tick-badge {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #e6f8fd;
+      color: #0096c2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 0 8px #e6f8fd;
+    }
+
+    .done h2 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-head);
+      margin: 0 0 8px;
+    }
+
+    .done p {
+      color: var(--text-muted);
+      font-size: 15px;
+      max-width: 56ch;
+      margin: 0 auto;
+    }
+
+    .ref-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      background: var(--accent-subtle);
+      color: #92400e;
+      border: 1.5px dashed var(--accent-border);
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      margin: 20px auto;
+      display: inline-block;
+      letter-spacing: 0.05em;
+    }
+
+    .sheet-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+    }
+
+    .sheet-status-pill.success {
+      background: #e6f8fd;
+      color: #007ea3;
+      border: 1px solid #bcecf8;
+    }
+
+    .sheet-status-pill.fallback {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .done .acts {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 360px;
+      margin: 24px auto 0;
+    }
+
+    /* Quick Modal for Google Sheet Setup */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      z-index: 100;
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      max-width: 560px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-card h3 {
+      margin: 0 0 8px;
+      font-size: 19px;
+      color: var(--text-head);
+    }
+
+    .modal-card p {
+      margin: 0 0 16px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .modal-card ol {
+      margin: 0 0 20px;
+      padding-left: 20px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-body);
+    }
+
+    .modal-card ol li {
+      margin-bottom: 6px;
+    }
+
+    .note {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      border-left: 3px solid var(--accent);
+      padding: 6px 14px;
+      background: #fffbeb;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: 20px 0;
+    }
+
+    .hide {
+      display: none !important;
+    }
+
+    /* Printable sheet */
+    #sheet {
+      display: none;
+      text-align: left;
+      margin-top: 32px;
+    }
+
+    #sheet h2 {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    #sheet .meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    #sheet img.sig {
+      max-width: 240px;
+      border-bottom: 1.5px solid #000;
+      display: block;
+      margin-top: 8px;
+    }
+
+    @media print {
+
+      .rail-wrap,
+      .bar,
+      .header-wrap,
+      .note,
+      .acts,
+      .tick-badge,
+      .ref-badge,
+      .sheet-status-pill,
+      .done>h2,
+      .done>p,
+      .modal-backdrop {
+        display: none !important;
+      }
+
+      .step {
+        display: none !important;
+      }
+
+      body {
+        background: #ffffff;
+        font-size: 12px;
+        color: #000;
+      }
+
+      main {
+        padding: 0;
+        max-width: 100%;
+        margin: 0;
+      }
+
+      .done {
+        display: block !important;
+        text-align: left;
+        padding: 0;
+      }
+
+      #sheet {
+        display: block;
+      }
+
+      .rev {
+        break-inside: avoid;
+        border-color: #ccc;
+        box-shadow: none;
+      }
+
+      .rev h3 .linkbtn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header Masthead -->
+  <header class="header-wrap">
+    <div class="header-inner">
+      <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+        <div style="background:#ffffff; padding:6px 14px; border-radius:10px; display:inline-flex; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.08);">
+          <img src="Assets/Troogood_Logo.png" alt="TrooGood" style="height:32px; width:auto; display:block;" onerror="this.style.display='none'" />
+        </div>
+        <h1 style="margin:0; font-size:23px; font-weight:800; color:#ffffff; letter-spacing:-0.02em;">Employee Onboarding &amp; Joining Form</h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Stepper Navigation -->
+  <nav class="rail-wrap" aria-label="Onboarding sections">
+    <div class="rail-progress">
+      <div class="rail-progress-bar" id="progressBar"></div>
+    </div>
+    <div class="rail-inner">
+      <div class="rail-tabs" id="rail"></div>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main>
+    <form id="form" novalidate>
+
+      <!-- STEP 1: Job Details -------------------------------------------------- -->
+      <section class="step on" data-step="0">
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Section 1 of 6</span>
+            <h2>Your Job & Position</h2>
+            <p>Confirm your joining details at TrooGood. If HR sent you a pre-filled link, please review and update
+              anything if needed.</p>
+          </div>
+          <fieldset>
+            <div class="grid two">
+              <label class="f"><span class="lab"><b>Employee code</b></span>
+                <input type="text" name="code" class="mono" placeholder="e.g. 561 — leave blank if not allotted">
+                <p class="hint">Leave blank if HR has not assigned you an employee ID yet.</p>
+              </label>
+              <label class="f" data-v="req"><span class="lab"><b>Date of joining</b><span class="req">*</span></span>
+                <input type="date" name="doj">
+                <p class="err">Enter the date you started work.</p>
+              </label>
+              <label class="f" data-v="req"><span class="lab"><b>Unit you work at</b><span class="req">*</span></span>
+                <select name="unit">
+                  <option value="">Select your unit</option>
+                  <option>TGK-1</option>
+                  <option>TGK-2</option>
+                  <option>TGK-3</option>
+                  <option>TGK-4</option>
+                  <option>TGK-5</option>
+                  <option>TGR</option>
+                  <option>Corporate</option>
+                  <option>Institutional</option>
+                  <option>Retail Sales</option>
+                </select>
+                <p class="err">Select the unit you work at.</p>
+              </label>
+              <label class="f" data-v="req"><span class="lab"><b>Your role / Designation</b><span
+                    class="req">*</span></span>
+                <input type="text" name="desig" placeholder="e.g. Helper, Roller, Sales Champ, Executive">
+                <p class="err">Enter your role or designation.</p>
+              </label>
+              <label class="f"><span class="lab"><b>Department or line</b></span>
+                <input type="text" name="dept" placeholder="e.g. Bars line, Chikki line, Stores, Quality"></label>
+              <label class="f"><span class="lab"><b>Who you report to</b></span>
+                <input type="text" name="reporting" placeholder="Name of your supervisor / manager"></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Employment Engagement Type</legend>
+            <div class="f" data-v="req" data-name="engagement">
+              <div class="choice-set" role="radiogroup" aria-label="Engagement type">
+                <label class="choice"><input type="radio" name="engagement" value="MFM on-roll"><span>On TrooGood
+                    rolls</span></label>
+                <label class="choice"><input type="radio" name="engagement" value="Vendor / contractor"><span>Through
+                    contractor</span></label>
+                <label class="choice"><input type="radio" name="engagement"
+                    value="Consultant"><span>Consultant</span></label>
+              </div>
+              <p class="err">Please choose one engagement type.</p>
+            </div>
+            <div class="grid two" style="margin-top:16px">
+              <label class="f hide" id="vendorWrap"><span class="lab"><b>Contractor / Agency name</b></span>
+                <input type="text" name="vendor" placeholder="e.g. Rubicon, Baba, GS Manpower, Max"></label>
+              <label class="f"><span class="lab"><b>Shift timing</b></span>
+                <select name="shift">
+                  <option value="">Select shift</option>
+                  <option>Shift A</option>
+                  <option>Shift B</option>
+                  <option>General shift</option>
+                </select></label>
+            </div>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- STEP 2: Personal Details --------------------------------------------- -->
+      <section class="step" data-step="1">
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Section 2 of 6</span>
+            <h2>About You (Personal Information)</h2>
+            <p>Write your name exactly as it appears on your Aadhaar card. Exact spelling prevents PF and ESIC portal
+              rejection.</p>
+          </div>
+          <fieldset>
+            <legend>Employee Passport Photograph</legend>
+            <div class="photo-upload-wrap">
+              <div class="photo-preview-box" id="photoPreviewBox">
+                <div class="photo-placeholder" id="photoPlaceholder">
+                  <span style="font-size:28px;">📷</span>
+                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:4px;">Passport
+                    Photo</span>
+                </div>
+                <img id="photoImg" class="hide" alt="Uploaded photograph" />
+              </div>
+              <div class="photo-actions">
+                <label class="btn primary"
+                  style="cursor:pointer; font-size:13.5px; padding:10px 18px; margin:0; display:inline-flex; align-items:center; gap:8px;">
+                  📷 Take / Upload Photo
+                  <input type="file" id="photoInput" accept="image/*" style="display:none;" />
+                </label>
+                <button type="button" class="linkbtn hide" id="removePhotoBtn"
+                  style="color:var(--danger); font-size:13px; font-weight:600; padding:4px 0;">✕ Remove Photo</button>
+                <p class="hint" style="margin-top:4px;">Upload your photo from your mobile camera or gallery. It will be
+                  saved in your Drive folder and printed at the top-left of your joining PDF.</p>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <div class="grid two">
+              <label class="f wide" data-v="req"><span class="lab"><b>Full name (as on Aadhaar Card)</b><span
+                    class="req">*</span></span>
+                <input type="text" name="name" autocomplete="name" placeholder="Full name matching Aadhaar">
+                <p class="err">Enter your full name as per Aadhaar.</p>
+              </label>
+              <label class="f" data-v="req"><span class="lab"><b>Father's or husband's name</b><span
+                    class="req">*</span></span>
+                <input type="text" name="father" placeholder="Father's or Husband's full name">
+                <p class="err">Enter father's or husband's name.</p>
+              </label>
+              <label class="f" data-v="dob"><span class="lab"><b>Date of birth</b><span class="req">*</span></span>
+                <input type="date" name="dob">
+                <p class="hint" id="ageOut"></p>
+                <p class="err">Enter your date of birth. You must be 18 or older to join.</p>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Gender</legend>
+            <div class="f" data-v="req" data-name="gender">
+              <div class="choice-set" role="radiogroup" aria-label="Gender">
+                <label class="choice"><input type="radio" name="gender" value="Male"><span>Male</span></label>
+                <label class="choice"><input type="radio" name="gender" value="Female"><span>Female</span></label>
+                <label class="choice"><input type="radio" name="gender"
+                    value="Transgender"><span>Transgender</span></label>
+              </div>
+              <p class="err">Please select your gender.</p>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Marital status</legend>
+            <div class="f" data-v="req" data-name="marital">
+              <div class="choice-set" role="radiogroup" aria-label="Marital status">
+                <label class="choice"><input type="radio" name="marital"
+                    value="Unmarried"><span>Unmarried</span></label>
+                <label class="choice"><input type="radio" name="marital" value="Married"><span>Married</span></label>
+                <label class="choice"><input type="radio" name="marital" value="Widow / Widower"><span>Widow or
+                    widower</span></label>
+                <label class="choice"><input type="radio" name="marital" value="Divorcee"><span>Divorced</span></label>
+              </div>
+              <p class="err">Please select your marital status.</p>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Contact Information</legend>
+            <div class="grid two">
+              <label class="f" data-v="mobile"><span class="lab"><b>Mobile number</b><span class="req">*</span></span>
+                <input type="tel" name="mobile" class="mono" inputmode="numeric" maxlength="10"
+                  placeholder="10 digits (e.g. 9876543210)" autocomplete="tel">
+                <p class="err">Enter a 10-digit Indian mobile number starting with 6, 7, 8 or 9.</p>
+              </label>
+              <label class="f"><span class="lab"><b>Alternate contact number</b></span>
+                <input type="tel" name="altmobile" class="mono" inputmode="numeric" maxlength="10"
+                  placeholder="Family or neighbour"></label>
+              <label class="f" data-v="email"><span class="lab"><b>Email address</b></span>
+                <input type="email" name="email" autocomplete="email"
+                  placeholder="e.g. yourname@example.com (optional)">
+                <p class="err">Check the email address format.</p>
+              </label>
+              <label class="f"><span class="lab"><b>Languages you speak</b></span>
+                <input type="text" name="languages" placeholder="e.g. Telugu, Hindi, English, Kannada"></label>
+              <label class="f"><span class="lab"><b>Blood group</b></span>
+                <select name="blood">
+                  <option value="">Select blood group</option>
+                  <option>A+</option>
+                  <option>A-</option>
+                  <option>B+</option>
+                  <option>B-</option>
+                  <option>O+</option>
+                  <option>O-</option>
+                  <option>AB+</option>
+                  <option>AB-</option>
+                  <option>Not known</option>
+                </select></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Residential Addresses</legend>
+            <div class="grid two">
+              <label class="f" data-v="req"><span class="lab"><b>Present residential address</b><span
+                    class="req">*</span></span>
+                <textarea name="addr_present"
+                  placeholder="Door No, Street, Village/Town, Mandal, District, State, PIN code"></textarea>
+                <p class="err">Enter the address where you currently reside.</p>
+              </label>
+              <label class="f"><span class="lab"><b>Permanent address (Native place)</b></span>
+                <textarea name="addr_permanent"
+                  placeholder="Leave blank if exactly the same as present address"></textarea></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Emergency Contact</legend>
+            <div class="grid three">
+              <label class="f" data-v="req"><span class="lab"><b>Contact person name</b><span
+                    class="req">*</span></span>
+                <input type="text" name="emg_name" placeholder="Full name">
+                <p class="err">Enter emergency contact person's name.</p>
+              </label>
+              <label class="f"><span class="lab"><b>Relationship to you</b></span>
+                <input type="text" name="emg_rel" placeholder="e.g. Spouse, Father, Brother"></label>
+              <label class="f" data-v="mobile"><span class="lab"><b>Emergency mobile number</b><span
+                    class="req">*</span></span>
+                <input type="tel" name="emg_mobile" class="mono" inputmode="numeric" maxlength="10"
+                  placeholder="10 digits">
+                <p class="err">Enter a valid 10-digit mobile number.</p>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- STEP 3: Bank & Identity ---------------------------------------------- -->
+      <section class="step" data-step="2">
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Section 3 of 6</span>
+            <h2>Bank Details & Identification</h2>
+            <p>Your monthly salary will be credited into this account. Please verify with your bank passbook or
+              cancelled cheque.</p>
+          </div>
+          <fieldset>
+            <legend>Aadhaar Card Document / Front Photo</legend>
+            <div class="photo-upload-wrap">
+              <div class="photo-preview-box" id="aadhaarPreviewBox" style="width:130px; height:85px; flex:0 0 130px;">
+                <div class="photo-placeholder" id="aadhaarPlaceholder">
+                  <span style="font-size:24px;">🪪</span>
+                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:2px;">Aadhaar Front</span>
+                </div>
+                <img id="aadhaarImg" class="hide" alt="Uploaded Aadhaar card" style="width:100%; height:100%; object-fit:contain; background:#ffffff;" />
+              </div>
+              <div class="photo-actions">
+                <label class="btn primary" style="cursor:pointer; font-size:13px; padding:9px 16px; margin:0; display:inline-flex; align-items:center; gap:8px;">
+                  🪪 Take / Upload Aadhaar Card
+                  <input type="file" id="aadhaarInput" accept="image/*" style="display:none;" />
+                </label>
+                <button type="button" class="linkbtn hide" id="removeAadhaarBtn" style="color:var(--danger); font-size:12.5px; font-weight:600; padding:4px 0;">✕ Remove Aadhaar Photo</button>
+                <p class="hint" style="margin-top:4px;">Take a photo of your Aadhaar card front or upload from gallery. It will be saved into your employee Drive folder.</p>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <div class="grid two">
+              <label class="f" data-v="aadhaar"><span class="lab"><b>Aadhaar number</b><span class="req">*</span></span>
+                <input type="tel" name="aadhaar" class="mono" inputmode="numeric" maxlength="12"
+                  placeholder="12 digit Aadhaar number">
+                <p class="err">An Aadhaar number must have exactly 12 digits.</p>
+              </label>
+              <label class="f" data-v="pan"><span class="lab"><b>PAN card number</b></span>
+                <input type="text" name="pan" class="mono" maxlength="10" placeholder="ABCDE1234F"
+                  style="text-transform:uppercase">
+                <p class="err">PAN must be 10 characters (e.g. ABCDE1234F).</p>
+              </label>
+              <label class="f wide" data-v="req"><span class="lab"><b>Bank name and branch</b><span
+                    class="req">*</span></span>
+                <input type="text" name="bank" placeholder="e.g. State Bank of India, Medchal Branch">
+                <p class="err">Enter your bank name and branch.</p>
+              </label>
+              <label class="f" data-v="acct"><span class="lab"><b>Bank account number</b><span
+                    class="req">*</span></span>
+                <input type="tel" name="account" class="mono" inputmode="numeric" maxlength="20"
+                  placeholder="Passbook account number">
+                <p class="err">Enter a valid bank account number (digits only).</p>
+              </label>
+              <label class="f" data-v="acct2"><span class="lab"><b>Confirm bank account number</b><span
+                    class="req">*</span></span>
+                <input type="tel" name="account2" class="mono" inputmode="numeric" maxlength="20"
+                  placeholder="Re-type account number">
+                <p class="err">The two account numbers do not match.</p>
+              </label>
+              <label class="f" data-v="ifsc"><span class="lab"><b>IFSC code</b><span class="req">*</span></span>
+                <input type="text" name="ifsc" class="mono" maxlength="11" placeholder="SBIN0001234"
+                  style="text-transform:uppercase">
+                <p class="err">An IFSC has 11 characters (e.g. SBIN0001234).</p>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Physical / Digital Documents Submitted with This Form</legend>
+            <div class="choice-set" id="docs">
+              <label class="choice"><input type="checkbox" name="docs" value="Aadhaar copy"><span>Aadhaar
+                  copy</span></label>
+              <label class="choice"><input type="checkbox" name="docs" value="PAN copy"><span>PAN copy</span></label>
+              <label class="choice"><input type="checkbox" name="docs" value="Bank passbook or cheque"><span>Passbook /
+                  Cheque</span></label>
+              <label class="choice"><input type="checkbox" name="docs" value="Photographs"><span>Passport
+                  Photographs</span></label>
+              <label class="choice"><input type="checkbox" name="docs" value="Education certificate"><span>Education
+                  certificate</span></label>
+              <label class="choice"><input type="checkbox" name="docs" value="Relieving letter"><span>Relieving
+                  letter</span></label>
+            </div>
+            <p class="hint">Please share photos of the checked documents with your unit HR on WhatsApp after submitting
+              this form.</p>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- STEP 4: Provident Fund ------------------------------------------------ -->
+      <section class="step" data-step="3">
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Section 4 of 6</span>
+            <h2>Provident Fund (EPFO Form 11)</h2>
+            <p>Statutory questions mandated under EPFO Form 11. Accurate information enables transfer of your previous
+              PF corpus.</p>
+          </div>
+          <fieldset>
+            <legend>Have you worked anywhere before joining TrooGood?</legend>
+            <div class="f" data-v="req" data-name="worked">
+              <div class="choice-set" role="radiogroup" aria-label="Worked before">
+                <label class="choice"><input type="radio" name="worked" value="No"><span>No, this is my first
+                    job</span></label>
+                <label class="choice"><input type="radio" name="worked" value="Yes"><span>Yes, worked
+                    previously</span></label>
+              </div>
+              <p class="err">Please select an option.</p>
+            </div>
+            <div class="grid two hide" id="prevWrap" style="margin-top:16px">
+              <label class="f"><span class="lab"><b>Previous employer company name</b></span><input type="text"
+                  name="prev_employer" placeholder="Company name"></label>
+              <label class="f"><span class="lab"><b>Last working date there</b></span><input type="date"
+                  name="prev_last_day"></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Have you ever had a PF (Provident Fund) account?</legend>
+            <div class="f" data-v="req" data-name="epf">
+              <div class="choice-set" role="radiogroup" aria-label="Earlier EPF member">
+                <label class="choice"><input type="radio" name="epf" value="No"><span>No, never enrolled</span></label>
+                <label class="choice"><input type="radio" name="epf" value="Yes"><span>Yes, have UAN / Member
+                    ID</span></label>
+              </div>
+              <p class="err">Please select an option.</p>
+            </div>
+            <p class="hint">Universal Account Number (UAN) is the 12-digit ID issued by EPFO.</p>
+          </fieldset>
+          <div id="epfYes" class="hide">
+            <fieldset>
+              <legend>Were you a member of the Pension Scheme (EPS 1995)?</legend>
+              <div class="f" data-name="eps">
+                <div class="choice-set" role="radiogroup" aria-label="Earlier EPS member">
+                  <label class="choice"><input type="radio" name="eps" value="Yes"><span>Yes</span></label>
+                  <label class="choice"><input type="radio" name="eps" value="No"><span>No</span></label>
+                  <label class="choice"><input type="radio" name="eps" value="Not sure"><span>Not sure</span></label>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Your Previous PF Account Particulars</legend>
+              <div class="grid two">
+                <label class="f" data-v="uan"><span class="lab"><b>Universal Account Number (UAN)</b></span>
+                  <input type="tel" name="uan" class="mono" inputmode="numeric" maxlength="12"
+                    placeholder="12 digit UAN">
+                  <p class="err">A UAN must have exactly 12 digits.</p>
+                </label>
+                <label class="f"><span class="lab"><b>Old PF account / member ID</b></span>
+                  <input type="text" name="pf_account" class="mono"
+                    placeholder="e.g. AP/HYD/0012345/000/0001234"></label>
+                <label class="f"><span class="lab"><b>Name of previous establishment</b></span>
+                  <input type="text" name="prev_estb" placeholder="Company establishment name"></label>
+                <label class="f"><span class="lab"><b>Scheme certificate / PPO number (if any)</b></span>
+                  <input type="text" name="ppo" placeholder="Scheme certificate or PPO number"></label>
+              </div>
+            </fieldset>
+          </div>
+          <fieldset>
+            <legend>Social Security & Citizenship</legend>
+            <div class="grid two">
+              <label class="f"><span class="lab"><b>ESIC insurance number (IP number)</b></span>
+                <input type="text" name="esic" class="mono" placeholder="Leave blank if newly enrolling"></label>
+              <label class="f"><span class="lab"><b>Are you an international / foreign worker?</b></span>
+                <select name="intl">
+                  <option>No</option>
+                  <option>Yes</option>
+                </select>
+                <p class="hint">Select 'Yes' only if you hold citizenship/passport of a country other than India.</p>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- STEP 5: Nominee & Family --------------------------------------------- -->
+      <section class="step" data-step="4">
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Section 5 of 6</span>
+            <h2>Nominee & Family Members</h2>
+            <p>Your primary nominee receives statutory benefits (PF, Gratuity, ESIC). Add family dependents for ESIC
+              medical benefit coverage.</p>
+          </div>
+          <fieldset>
+            <legend>Primary Statutory Nominee</legend>
+            <div class="grid three">
+              <label class="f" data-v="req"><span class="lab"><b>Nominee full name</b><span class="req">*</span></span>
+                <input type="text" name="nom_name" placeholder="Full name">
+                <p class="err">Enter nominee's full name.</p>
+              </label>
+              <label class="f" data-v="req"><span class="lab"><b>Relationship to you</b><span
+                    class="req">*</span></span>
+                <input type="text" name="nom_rel" placeholder="e.g. Spouse, Mother, Father, Son">
+                <p class="err">Enter relationship with nominee.</p>
+              </label>
+              <label class="f"><span class="lab"><b>Nominee date of birth</b></span>
+                <input type="date" name="nom_dob"></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Family Dependent Details (for ESIC Medical Insurance)</legend>
+            <div id="famRows"></div>
+            <button type="button" class="btn ghost" id="addFam"
+              style="margin-top:14px; font-size:14px; padding:10px 18px">
+              + Add another family member
+            </button>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- STEP 6: Declarations & Signature -------------------------------------- -->
+      <section class="step" data-step="5">
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Section 6 of 6</span>
+            <h2>Declarations & Digital Signature</h2>
+            <p>Please review each compliance statement below, tick each mandatory undertaking, and sign with your finger
+              or stylus.</p>
+            <button type="button" class="btn ghost" id="checkAllDec"
+              style="margin-top:12px; font-size:13.5px; padding:8px 16px; border-color:var(--primary); color:var(--primary);">
+              ✓ Agree & Select All Mandatory Declarations
+            </button>
+          </div>
+
+          <div class="dec"><label class="check"><input type="checkbox" name="dec_true" data-v="must">
+              <span><b>Truthfulness of Information:</b> Everything I have written in this form is true and correct. I
+                understand that falsification or concealment of information may lead to termination of
+                employment.</span></label></div>
+
+          <div class="dec"><label class="check"><input type="checkbox" name="dec_safety" data-v="must">
+              <span><b>Factory Safety & Hygiene:</b> I agree to follow the safety, food-hygiene, and Good Manufacturing
+                Practice (GMP) rules of TrooGood facilities, wear prescribed PPE, and adhere to shift
+                schedules.</span></label></div>
+
+          <div class="dec"><label class="check"><input type="checkbox" name="dec_confid" data-v="must">
+              <span><b>Confidentiality:</b> I will keep TrooGood's recipes, millet manufacturing processes, supplier
+                data, and proprietary trade secrets strictly confidential during and after my employment.</span></label>
+          </div>
+
+          <div class="dec"><label class="check"><input type="checkbox" name="dec_bank" data-v="must">
+              <span><b>Salary Direct Deposit:</b> I authorise TrooGood (Mformillet Foods Pvt Ltd) to disburse my wages
+                into the declared bank account and make all statutory deductions (PF, ESIC, PT, TDS) required by
+                law.</span></label></div>
+
+          <div class="dec"><label class="check"><input type="checkbox" name="dec_aadhaar" data-v="must">
+              <span><b>Aadhaar & EPFO Authentication:</b> I authorise EPFO and TrooGood to use my Aadhaar details for
+                statutory identity verification and request automatic transfer of prior PF accumulative
+                service.</span></label>
+            <p class="small">Statutory undertaking under EPFO Form 11 guidelines.</p>
+          </div>
+
+          <div class="dec pf hide" id="pfExclude"><label class="check"><input type="checkbox" name="dec_pf_exclude">
+              <span><b>Excluded Employee PF Exemption:</b> I have never been an EPF/EPS member, hold no UAN, and my
+                monthly pay exceeds the statutory wage threshold (₹15,000/month). I request exclusion from PF
+                cover.</span></label>
+            <p class="small">Subject to HR verification of salary structure against the statutory wage ceiling.</p>
+          </div>
+
+          <fieldset style="margin-top:28px">
+            <legend>Digital Signature</legend>
+            <div class="f" data-v="sig" data-name="signature">
+              <div class="sig-wrap">
+                <canvas id="pad" aria-label="Signature drawing canvas"></canvas>
+                <div class="sig-bar">
+                  <span>✍️ Sign inside the box with finger/mouse</span>
+                  <div style="display:flex; gap:12px;">
+                    <button type="button" class="linkbtn" id="adoptSig"
+                      style="color:var(--accent-hover); font-weight:700;">🖊️ Adopt Typed Name as Signature</button>
+                    <button type="button" class="linkbtn" id="clearSig">✕ Clear</button>
+                  </div>
+                </div>
+              </div>
+              <p class="err" style="margin-top:8px">Please draw your signature or click "Adopt Typed Name as Signature".
+              </p>
+            </div>
+            <div class="grid two" style="margin-top:16px">
+              <label class="f" data-v="req"><span class="lab"><b>Type your full name to confirm signature</b><span
+                    class="req">*</span></span>
+                <input type="text" name="sig_name" placeholder="Full name matching your signature">
+                <p class="err">Type your name as your confirmation.</p>
+              </label>
+              <label class="f" data-v="req"><span class="lab"><b>Place / City</b><span class="req">*</span></span>
+                <input type="text" name="sig_place" placeholder="City or location you are currently at">
+                <p class="err">Enter your current location.</p>
+              </label>
+            </div>
+            <p class="hint" id="stampLine"></p>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- STEP 7: Review & Final Submission ------------------------------------ -->
+      <section class="step" data-step="6">
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Review & Verify</span>
+            <h2>Final Review Before Submission</h2>
+            <p>Please review all entries below. Once submitted, your profile will be sent directly to the HR Google
+              Sheet.</p>
+          </div>
+          <div id="review"></div>
+          <div class="note">
+            <b>What happens next?</b> Submitting automatically records your responses in TrooGood's central HR Google
+            Sheet. You will also get a downloadable PDF/HTML copy for your own records.
+          </div>
+        </div>
+      </section>
+
+    </form>
+
+    <!-- DONE / SUCCESS SCREEN ------------------------------------------------ -->
+    <section class="done" id="done">
+      <div class="step-card" style="text-align:center;">
+        <div class="tick-badge">✓</div>
+        <h2 id="doneHead">Joining Form Successfully Submitted!</h2>
+        <p id="doneMsg">Your onboarding details have been recorded.</p>
+
+        <div>
+          <div class="ref-badge" id="refOut">Reference: TG-PENDING</div>
+        </div>
+
+        <div id="sheetStatusWrap">
+          <span class="sheet-status-pill success" id="sheetStatusPill">
+            <span>●</span> Saved to HR Google Sheet
+          </span>
+        </div>
+
+        <div class="acts">
+          <a id="driveFolderBtn" href="https://drive.google.com/drive/folders/1RPOKrjrlykX2GjkbQ0wwBFqiIXV8zs4t"
+            target="_blank" class="btn primary" style="text-decoration:none;">
+            📁 Open Employee Subfolder in Google Drive
+          </a>
+          <button type="button" class="btn ghost" id="dlBtn">
+            📥 Download Local Form Backup
+          </button>
+          <button type="button" class="btn ghost" id="printBtn">
+            🖨️ Save as PDF / Print
+          </button>
+          <button type="button" class="btn ghost" id="waBtn">
+            💬 Send Reference to HR on WhatsApp
+          </button>
+        </div>
+
+        <div id="sheet"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Fixed Action Bar -->
+  <div class="bar" id="bar">
+    <div class="bar-in">
+      <button type="button" class="btn ghost" id="back" style="visibility:hidden">← Back</button>
+      <span class="count" id="count">Step 1 of 7 · 14%</span>
+      <button type="button" class="btn primary" id="next">Continue →</button>
+    </div>
+  </div>
+
+  <!-- Modal: Google Sheet Connection Setup -->
+  <div class="modal-backdrop" id="cfgModal" role="dialog" aria-modal="true" aria-labelledby="cfgTitle">
+    <div class="modal-card">
+      <h3 id="cfgTitle">Google Sheet Connection Settings</h3>
+      <p>This form automatically saves submissions to your Google Sheet using Google Apps Script.</p>
+
+      <label class="f" style="margin-bottom:16px;">
+        <span class="lab"><b>Google Apps Script Web App URL:</b></span>
+        <input type="text" id="cfgUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="mono">
+        <p class="hint">Deploy "TrooGood_Form_To_Google_Sheet.gs" as a Web App (Access: Anyone) and paste its URL here.
+        </p>
+      </label>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button type="button" class="btn ghost" id="closeCfgBtn">Cancel</button>
+        <button type="button" class="btn primary" id="saveCfgBtn" style="flex:0 0 auto;">Save URL</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    /* ==========================================================================
+       HR CONFIGURATION (Can also be set dynamically via Settings modal)
+       ========================================================================== */
+    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbxxLRDDc7WvMZjP9OPlXYASY6p_pz-24Q505D6eQSTXW4qc_RuqdUc05_ekXIrqheUdUw/exec";// Paste your deployed Google Apps Script /exec URL here
+    var HR_WHATSAPP = "";                // e.g. "919876543210" for WhatsApp follow-up
+    var HR_EMAIL = "dhanavardhanchennuru@gmail.com";  // Fallback HR notification contact
+
+    /* ==========================================================================
+       DOM & FORM STATE
+       ========================================================================== */
+    var $ = function (s, r) { return (r || document).querySelector(s); };
+    var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+    var form = $("#form");
+    var steps = $$(".step");
+    var TITLES = [
+      "Job & Unit",
+      "About You",
+      "Bank & ID",
+      "Provident Fund",
+      "Nominee & Family",
+      "Declarations",
+      "Review & Submit"
+    ];
+    var cur = 0;
+    var submitted = false;
+
+    /* Check local storage for configured URL */
+    var storedUrl = localStorage.getItem("troogood_submit_url");
+    if (!SUBMIT_URL && storedUrl) {
+      SUBMIT_URL = storedUrl;
+    }
+
+    /* ==========================================================================
+       STEPPERS & PROGRESS BAR
+       ========================================================================== */
+    var rail = $("#rail");
+    var progressBar = $("#progressBar");
+
+    TITLES.forEach(function (title, idx) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "rail-tab";
+      btn.innerHTML = '<span class="step-num">' + (idx + 1) + '</span><span>' + title + '</span>';
+      btn.addEventListener("click", function () {
+        if (idx <= cur || validate(cur, true)) {
+          go(idx);
+        }
+      });
+      rail.appendChild(btn);
+    });
+
+    function updateProgress(stepIdx) {
+      var pct = Math.round(((stepIdx + 1) / steps.length) * 100);
+      progressBar.style.width = pct + "%";
+      $("#count").textContent = "Step " + (stepIdx + 1) + " of " + steps.length + " (" + pct + "%)";
+    }
+
+    function go(idx) {
+      if (idx < 0 || idx >= steps.length) return;
+      cur = idx;
+
+      steps.forEach(function (stepEl, k) {
+        stepEl.classList.toggle("on", k === idx);
+      });
+
+      $$("#rail .rail-tab").forEach(function (tabBtn, k) {
+        tabBtn.setAttribute("aria-current", k === idx ? "true" : "false");
+        tabBtn.classList.toggle("done", k < idx);
+      });
+
+      var backBtn = $("#back");
+      backBtn.style.visibility = idx === 0 ? "hidden" : "visible";
+
+      var nextBtn = $("#next");
+      nextBtn.textContent = (idx === steps.length - 1) ? "Submit to Google Sheet ✓" : "Continue →";
+
+      updateProgress(idx);
+
+      if (idx === steps.length - 1) {
+        buildReview();
+      }
+      if (steps[idx].querySelector("#pad")) {
+        sizePad();
+      }
+
+      // Scroll active tab into view in sticky stepper
+      var activeTab = rail.children[idx];
+      if (activeTab) {
+        activeTab.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    $("#back").addEventListener("click", function () { go(cur - 1); });
+    $("#next").addEventListener("click", function () {
+      if (!validate(cur)) return;
+      if (cur === steps.length - 1) {
+        submit();
+      } else {
+        go(cur + 1);
+      }
+    });
+
+    /* ==========================================================================
+       VALIDATION LOGIC (Strictly preserving original rule definitions)
+       ========================================================================== */
+        var textTitleFields = [
+      "name", "father", "desig", "dept", "reporting", "vendor",
+      "languages", "addr_present", "addr_permanent", "emg_name", "emg_rel",
+      "bank", "prev_employer", "prev_estb", "nom_name", "nom_rel", "sig_name", "sig_place"
+    ];
+
+var RULES = {
+      req: function (v) { return (v || "").trim().length > 0; },
+      mobile: function (v) { return /^[6-9]\d{9}$/.test((v || "").trim()); },
+      email: function (v) { var t = (v || "").trim(); return t === "" || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(t); },
+      aadhaar: function (v) { return /^\d{12}$/.test((v || "").replace(/\s/g, "")); },
+      pan: function (v) { var t = (v || "").trim().toUpperCase(); return t === "" || /^[A-Z]{5}\d{4}[A-Z]$/.test(t); },
+      ifsc: function (v) { return /^[A-Z]{4}0[A-Z0-9]{6}$/.test((v || "").trim().toUpperCase()); },
+      acct: function (v) { return /^\d{6,20}$/.test((v || "").trim()); },
+      uan: function (v) { var t = (v || "").trim(); return t === "" || /^\d{12}$/.test(t); },
+      dob: function (v) {
+        if (!v) return false;
+        var d = new Date(v);
+        if (isNaN(d)) return false;
+        var a = age(d);
+        return a >= 18 && a < 75;
+      }
+    };
+
+    function age(d) {
+      var now = new Date();
+      var a = now.getFullYear() - d.getFullYear();
+      var m = now.getMonth() - d.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < d.getDate())) a--;
+      return a;
+    }
+
+    function fieldsIn(stepIdx) {
+      return $$("[data-v]", steps[stepIdx]).filter(function (el) {
+        return !el.closest(".hide") && !el.classList.contains("hide");
+      });
+    }
+
+    function checkField(el) {
+      var kind = el.getAttribute("data-v");
+      var ok = true;
+
+      if (kind === "must") {
+        var chk = (el.tagName === "INPUT") ? el : $("input[type=checkbox]", el);
+        ok = chk ? chk.checked : false;
+        var box = el.closest(".dec");
+        if (box) {
+          box.style.borderColor = ok ? "" : "var(--danger)";
+          box.style.backgroundColor = ok ? "" : "var(--danger-subtle)";
+        }
+        return ok;
+      }
+      if (kind === "sig") {
+        ok = hasInk || (val("sig_name").trim().length > 0) || (val("name").trim().length > 0);
+      } else if (kind === "acct2") {
+        ok = val("account2") !== "" && val("account2") === val("account");
+      } else {
+        var input = (el.tagName === "INPUT" || el.tagName === "SELECT" || el.tagName === "TEXTAREA")
+          ? el
+          : $("input, select, textarea", el);
+        if (el.hasAttribute("data-name")) {
+          ok = !!form.querySelector('[name="' + el.getAttribute("data-name") + '"]:checked');
+        } else if (input) {
+          var fn = RULES[kind] || RULES.req;
+          ok = fn(input.value);
+          if (ok && typeof textTitleFields !== "undefined" && textTitleFields.indexOf(input.name) > -1 && input.value.trim().length > 0) {
+            var words = input.value.trim().split(/\s+/);
+            var allCaps = words.every(function (w) { return /^[A-Z0-9]/.test(w); });
+            if (!allCaps) {
+              ok = false;
+              var errEl = el.querySelector(".err");
+              if (errEl) errEl.textContent = "First letter must be capital (e.g. 'Dhana', not 'dhana').";
+            }
+          }
+        }
+      }
+
+      el.classList.toggle("bad", !ok);
+      return ok;
+    }
+
+    function validate(stepIdx, quiet) {
+      var firstBad = null;
+      fieldsIn(stepIdx).forEach(function (el) {
+        if (!checkField(el) && !firstBad) {
+          firstBad = el;
+        }
+      });
+      if (firstBad && !quiet) {
+        firstBad.scrollIntoView({ block: "center", behavior: "smooth" });
+        var input = (firstBad.tagName === "INPUT" || firstBad.tagName === "SELECT" || firstBad.tagName === "TEXTAREA")
+          ? firstBad
+          : $("input, select, textarea", firstBad);
+        if (input) input.focus({ preventScroll: true });
+      }
+      return !firstBad;
+    }
+
+    /* Auto-uppercase & numeric filter */
+    var UPPER = ["pan", "ifsc"];
+    var DIGITS = ["aadhaar", "account", "account2", "mobile", "altmobile", "emg_mobile", "uan"];
+
+    form.addEventListener("input", function (e) {
+      var n = e.target.name;
+      if (!n) return;
+
+      if (UPPER.indexOf(n) > -1) {
+        var p = e.target.selectionStart;
+        e.target.value = e.target.value.toUpperCase();
+        try { e.target.setSelectionRange(p, p); } catch (err) { }
+      }
+      if (DIGITS.indexOf(n) > -1) {
+        e.target.value = e.target.value.replace(/\D/g, "");
+      }
+
+      var holder = e.target.closest("[data-v]");
+      if (holder && holder.classList.contains("bad")) checkField(holder);
+
+      if (n === "account" || n === "account2") {
+        var h = $('[data-v="acct2"]');
+        if (h && h.classList.contains("bad")) checkField(h);
+      }
+    });
+
+    form.addEventListener("change", function (e) {
+      var holder = e.target.closest("[data-v]");
+      if (holder) checkField(holder);
+    });
+
+    /* ==========================================================================
+       CONDITIONAL FORM LOGIC
+       ========================================================================== */
+    function val(n) { var el = form.elements[n]; if (!el) return ""; return (el.value || "").trim(); }
+    function radio(n) { var el = form.querySelector('[name="' + n + '"]:checked'); return el ? el.value : ""; }
+
+    form.addEventListener("change", function (e) {
+      var n = e.target.name;
+      if (n === "engagement") {
+        $("#vendorWrap").classList.toggle("hide", radio("engagement") !== "Vendor / contractor");
+      }
+      if (n === "worked") {
+        $("#prevWrap").classList.toggle("hide", radio("worked") !== "Yes");
+      }
+      if (n === "epf") {
+        var yes = radio("epf") === "Yes";
+        $("#epfYes").classList.toggle("hide", !yes);
+        $("#pfExclude").classList.toggle("hide", yes);
+        if (yes && form.elements["dec_pf_exclude"]) {
+          form.elements["dec_pf_exclude"].checked = false;
+        }
+      }
+      if (n === "dob") {
+        var v = val("dob");
+        var d = new Date(v);
+        $("#ageOut").textContent = (v && !isNaN(d)) ? "Calculated age: " + age(d) + " years old" : "";
+      }
+    });
+
+    /* ==========================================================================
+       DYNAMIC FAMILY ROWS
+       ========================================================================== */
+    var famN = 0;
+    function addFam(initialData) {
+      famN++;
+      var rowId = famN;
+      var card = document.createElement("div");
+      card.className = "fam-card fam";
+      card.id = "fam_card_" + rowId;
+
+      card.innerHTML =
+        '<div class="fam-card-head">' +
+        '<span class="fam-card-num">Family Member #' + rowId + '</span>' +
+        (rowId > 1 ? '<button type="button" class="fam-remove-btn" onclick="removeFam(' + rowId + ')">✕ Remove</button>' : '') +
+        '</div>' +
+        '<div class="grid three">' +
+        '<label class="f"><span class="lab">Member full name</span><input type="text" name="fam_name_' + rowId + '" placeholder="Full name"></label>' +
+        '<label class="f"><span class="lab">Relationship</span><input type="text" name="fam_rel_' + rowId + '" placeholder="e.g. Spouse, Son, Daughter"></label>' +
+        '<label class="f"><span class="lab">Date of birth</span><input type="date" name="fam_dob_' + rowId + '"></label>' +
+        '</div>';
+
+      $("#famRows").appendChild(card);
+
+      if (initialData) {
+        var ins = $$("input", card);
+        if (initialData.name) ins[0].value = initialData.name;
+        if (initialData.rel) ins[1].value = initialData.rel;
+        if (initialData.dob) ins[2].value = initialData.dob;
+      }
+    }
+
+    window.removeFam = function (id) {
+      var el = document.getElementById("fam_card_" + id);
+      if (el) el.parentNode.removeChild(el);
+    };
+
+    $("#addFam").addEventListener("click", function () { addFam(); });
+    addFam(); // Member 1
+    /* ==========================================================================
+       EMPLOYEE PASSPORT PHOTOGRAPH HANDLER
+       ========================================================================== */
+    var photoDataUrl = "";
+    var photoInput = $("#photoInput");
+    var photoImg = $("#photoImg");
+    var photoPlaceholder = $("#photoPlaceholder");
+    var removePhotoBtn = $("#removePhotoBtn");
+
+    if (photoInput) {
+      photoInput.addEventListener("change", function (e) {
+        var file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+          var img = new Image();
+          img.onload = function () {
+            // Compress and format to passport dimensions (max 360x450 px)
+            var canvas = document.createElement("canvas");
+            var maxW = 360;
+            var maxH = 450;
+            var w = img.width;
+            var h = img.height;
+
+            if (w > maxW || h > maxH) {
+              var ratio = Math.min(maxW / w, maxH / h);
+              w = Math.round(w * ratio);
+              h = Math.round(h * ratio);
+            }
+
+            canvas.width = w;
+            canvas.height = h;
+            var cCtx = canvas.getContext("2d");
+            cCtx.drawImage(img, 0, 0, w, h);
+
+            photoDataUrl = canvas.toDataURL("image/jpeg", 0.85);
+            if (photoImg) {
+              photoImg.src = photoDataUrl;
+              photoImg.classList.remove("hide");
+            }
+            if (photoPlaceholder) {
+              photoPlaceholder.classList.add("hide");
+            }
+            if (removePhotoBtn) {
+              removePhotoBtn.classList.remove("hide");
+            }
+
+            // Auto-check "Photographs" in documents list
+            var photoDocChk = form.querySelector('input[name="docs"][value="Photographs"]');
+            if (photoDocChk) photoDocChk.checked = true;
+          };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      if (removePhotoBtn) {
+        removePhotoBtn.addEventListener("click", function () {
+          photoDataUrl = "";
+          if (photoImg) {
+            photoImg.src = "";
+            photoImg.classList.add("hide");
+          }
+          if (photoPlaceholder) {
+            photoPlaceholder.classList.remove("hide");
+          }
+          removePhotoBtn.classList.add("hide");
+          photoInput.value = "";
+        });
+      }
+    }
+
+    /* ==========================================================================
+       HIGH-RES DIGITAL SIGNATURE PAD
+       ========================================================================== */
+    var pad = $("#pad");
+    var ctx = pad.getContext("2d");
+    var drawing = false;
+    var hasInk = false;
+    pad.width = 0;
+
+    function sizePad() {
+      var r = pad.getBoundingClientRect();
+      var dpr = window.devicePixelRatio || 1;
+      if (!r.width) return;
+      if (pad.width === Math.round(r.width * dpr) && pad.height === Math.round(r.height * dpr)) return;
+
+      var existingImg = hasInk ? pad.toDataURL() : null;
+      pad.width = Math.round(r.width * dpr);
+      pad.height = Math.round(r.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.lineWidth = 2.2;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = "#0f172a";
+
+      if (existingImg) {
+        var img = new Image();
+        img.onload = function () { ctx.drawImage(img, 0, 0, r.width, r.height); };
+        img.src = existingImg;
+      }
+    }
+    window.addEventListener("resize", sizePad);
+
+    function getPointerPos(e) {
+      var r = pad.getBoundingClientRect();
+      var clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+      var clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+      return { x: clientX - r.left, y: clientY - r.top };
+    }
+
+    function startDraw(e) {
+      drawing = true;
+      if (e.pointerId !== undefined && pad.setPointerCapture) {
+        try { pad.setPointerCapture(e.pointerId); } catch (err) { }
+      }
+      var p = getPointerPos(e);
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+    }
+
+    function moveDraw(e) {
+      if (!drawing) return;
+      var p = getPointerPos(e);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      if (!hasInk) {
+        hasInk = true;
+        var h = $('[data-v="sig"]');
+        if (h) h.classList.remove("bad");
+      }
+    }
+
+    function endDraw() {
+      drawing = false;
+    }
+
+    pad.addEventListener("pointerdown", startDraw);
+    pad.addEventListener("pointermove", moveDraw);
+    ["pointerup", "pointercancel", "pointerleave"].forEach(function (ev) {
+      pad.addEventListener(ev, endDraw);
+    });
+
+    // Touch events fallback for mobile browsers
+    pad.addEventListener("touchstart", function (e) {
+      if (e.target === pad) e.preventDefault();
+      startDraw(e);
+    }, { passive: false });
+    pad.addEventListener("touchmove", function (e) {
+      if (e.target === pad) e.preventDefault();
+      moveDraw(e);
+    }, { passive: false });
+    pad.addEventListener("touchend", function (e) {
+      if (e.target === pad) e.preventDefault();
+      endDraw();
+    }, { passive: false });
+
+    // Mouse events fallback
+    pad.addEventListener("mousedown", startDraw);
+    pad.addEventListener("mousemove", moveDraw);
+    window.addEventListener("mouseup", endDraw);
+
+    $("#clearSig").addEventListener("click", function () {
+      ctx.clearRect(0, 0, pad.width, pad.height);
+      hasInk = false;
+    });
+
+    // Adopt typed name as digital signature
+    function renderSignatureText(name) {
+      sizePad();
+      var r = pad.getBoundingClientRect();
+      var w = r.width || 360;
+      var h = r.height || 180;
+      ctx.clearRect(0, 0, pad.width, pad.height);
+
+      var fontSize = Math.min(38, Math.max(22, Math.floor(w / 11)));
+      ctx.font = "italic bold " + fontSize + "px 'Brush Script MT', 'Great Vibes', 'Segoe Script', cursive, sans-serif";
+      ctx.fillStyle = "#00B5E8";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(name, w / 2, h / 2 - 6);
+
+      // Add flourish underline
+      var textW = ctx.measureText(name).width;
+      var startX = Math.max(16, (w - textW) / 2 - 10);
+      var endX = Math.min(w - 16, (w + textW) / 2 + 10);
+      var lineY = h / 2 + fontSize / 2;
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#00B5E8";
+      ctx.moveTo(startX, lineY);
+      ctx.quadraticCurveTo(w / 2, lineY + 6, endX, lineY);
+      ctx.stroke();
+
+      hasInk = true;
+      var hSig = $('[data-v="sig"]');
+      if (hSig) hSig.classList.remove("bad");
+    }
+
+    function adoptTypedSignature() {
+      var typedName = val("sig_name").trim() || val("name").trim();
+      if (!typedName) {
+        var input = form.elements["sig_name"];
+        if (input) {
+          input.focus();
+          input.placeholder = "Please enter your name here first";
+        }
+        alert("Please enter your name in 'Type your full name to confirm signature' first.");
+        return;
+      }
+      renderSignatureText(typedName);
+    }
+
+    var adoptSigBtn = $("#adoptSig");
+    if (adoptSigBtn) {
+      adoptSigBtn.addEventListener("click", adoptTypedSignature);
+    }
+
+    function ensureSignature() {
+      if (!hasInk) {
+        var nameToSign = val("sig_name").trim() || val("name").trim();
+        if (nameToSign) {
+          renderSignatureText(nameToSign);
+        }
+      }
+    }
+
+    // "Agree & Select All Mandatory Declarations" button
+    var checkAllDecBtn = $("#checkAllDec");
+    if (checkAllDecBtn) {
+      checkAllDecBtn.addEventListener("click", function () {
+        ["dec_true", "dec_safety", "dec_confid", "dec_bank", "dec_aadhaar"].forEach(function (n) {
+          if (form.elements[n]) {
+            form.elements[n].checked = true;
+            var box = form.elements[n].closest(".dec");
+            if (box) {
+              box.style.borderColor = "";
+              box.style.backgroundColor = "";
+            }
+          }
+        });
+      });
+    }
+
+    /* ==========================================================================
+       REVIEW & SUMMARY BUILDER
+       ========================================================================== */
+    var LABELS = {
+      code: "Employee code", doj: "Date of joining", unit: "Unit", desig: "Role / Designation", dept: "Department or line",
+      reporting: "Reports to", engagement: "Engagement", vendor: "Contractor", shift: "Shift timing",
+      name: "Full name", father: "Father's / Husband's name", dob: "Date of birth", gender: "Gender",
+      marital: "Marital status", mobile: "Mobile number", altmobile: "Alternate number", email: "Email",
+      languages: "Languages", blood: "Blood group", addr_present: "Present address", addr_permanent: "Permanent address",
+      emg_name: "Emergency contact", emg_rel: "Relationship", emg_mobile: "Emergency mobile",
+      aadhaar: "Aadhaar number", pan: "PAN number", bank: "Bank and branch", account: "Account number", ifsc: "IFSC", docs: "Documents sent",
+      worked: "Worked before", prev_employer: "Previous employer", prev_last_day: "Last working day",
+      epf: "Had PF account before", eps: "Was in EPS 1995", uan: "UAN", pf_account: "Old PF account",
+      prev_estb: "Earlier establishment", ppo: "Scheme certificate / PPO", esic: "ESIC number", intl: "International worker",
+      nom_name: "Nominee", nom_rel: "Nominee relationship", nom_dob: "Nominee date of birth",
+      sig_name: "Signed by", sig_place: "Place"
+    };
+
+    var GROUPS = [
+      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "dept", "reporting", "engagement", "vendor", "shift"]],
+      ["Personal & Contact", 1, ["name", "father", "dob", "gender", "marital", "mobile", "altmobile", "email", "languages", "blood", "addr_present", "addr_permanent", "emg_name", "emg_rel", "emg_mobile"]],
+      ["Bank & Identification", 2, ["aadhaar", "pan", "bank", "account", "ifsc", "docs"]],
+      ["Provident Fund & Social Security", 3, ["worked", "prev_employer", "prev_last_day", "epf", "eps", "uan", "pf_account", "prev_estb", "ppo", "esic", "intl"]],
+      ["Nominee & Family Members", 4, ["nom_name", "nom_rel", "nom_dob"]],
+      ["Declarations & Signature", 5, ["sig_name", "sig_place"]]
+    ];
+
+    function collect() {
+      var out = {};
+      Object.keys(LABELS).forEach(function (k) {
+        if (k === "docs") {
+          out.docs = $$('input[name="docs"]:checked').map(function (c) { return c.value; }).join(", ");
+        } else if (form.querySelector('[name="' + k + '"][type=radio]')) {
+          out[k] = radio(k);
+        } else {
+          out[k] = val(k);
+        }
+      });
+
+      out.family = [];
+      $$("#famRows .fam").forEach(function (row) {
+        var ins = $$("input", row);
+        if (ins.length >= 3) {
+          var rec = {
+            name: ins[0].value.trim(),
+            relation: ins[1].value.trim(),
+            dob: ins[2].value
+          };
+          if (rec.name) out.family.push(rec);
+        }
+      });
+
+      out.declarations = {};
+      $$('input[type=checkbox][name^="dec_"]').forEach(function (c) {
+        out.declarations[c.name] = c.checked;
+      });
+
+      out.photoImage = photoDataUrl || "";
+      out.aadhaarImage = aadhaarDataUrl || "";
+      out.signedAt = new Date().toISOString();
+      out.reference = refNo();
+      return out;
+    }
+
+    var REF = null;
+    (function () {
+      var count = parseInt(localStorage.getItem("tg_jf_counter") || "0", 10) + 1;
+      var badge = $("#headerRefBadge");
+      if (badge) badge.textContent = "TG-JF-" + String(count).padStart(3, "0");
+    })();
+    function refNo() {
+      if (REF) return REF;
+      var count = parseInt(localStorage.getItem("tg_jf_counter") || "0", 10) + 1;
+      localStorage.setItem("tg_jf_counter", String(count));
+      var padded = String(count).padStart(3, "0");
+      REF = "TG-JF-" + padded;
+      var badge = $("#headerRefBadge");
+      if (badge) badge.textContent = REF;
+      return REF;
+    }
+
+    function buildReview() {
+      var data = collect();
+      var html = "";
+
+      GROUPS.forEach(function (group) {
+        var rows = "";
+        if (group[0] === "Personal & Contact" && data.photoImage) {
+          rows += '<div class="r"><dt>Passport Photo</dt><dd><img src="' + data.photoImage + '" style="width:75px; height:95px; object-fit:cover; border:2px solid var(--primary); border-radius:4px; display:block;" alt="Photo" /></dd></div>';
+        }
+        if (group[0] === "Bank & Identification" && data.aadhaarImage) {
+          rows += '<div class="r"><dt>Aadhaar Card</dt><dd><img src="' + data.aadhaarImage + '" style="width:120px; height:80px; object-fit:contain; border:2px solid var(--primary); border-radius:4px; display:block; background:#fff;" alt="Aadhaar Card" /></dd></div>';
+        }
+        group[2].forEach(function (k) {
+          if (k === "vendor" && data.engagement !== "Vendor / contractor") return;
+          if (["eps", "uan", "pf_account", "prev_estb", "ppo"].indexOf(k) > -1 && data.epf !== "Yes") return;
+          if (["prev_employer", "prev_last_day"].indexOf(k) > -1 && data.worked !== "Yes") return;
+          var v = data[k];
+          rows += '<div class="r"><dt>' + (LABELS[k] || k) + "</dt><dd" + (v ? "" : ' class="blank"') + ">" +
+            esc(v || "Not provided") + "</dd></div>";
+        });
+
+        if (group[0] === "Nominee & Family Members" && data.family.length) {
+          data.family.forEach(function (f, i) {
+            rows += '<div class="r"><dt>Family Member ' + (i + 1) + "</dt><dd>" +
+              esc(f.name + (f.relation ? " (" + f.relation + ")" : "") + (f.dob ? ", born " + f.dob : "")) + "</dd></div>";
+          });
+        }
+
+        if (group[0] === "Declarations & Signature") {
+          var countAccepted = Object.keys(data.declarations).filter(function (k) { return data.declarations[k]; }).length;
+          rows += '<div class="r"><dt>Declarations Accepted</dt><dd>' + countAccepted + " statutory undertakings confirmed</dd></div>";
+          rows += '<div class="r"><dt>PF Exemption Request</dt><dd>' +
+            (data.declarations.dec_pf_exclude ? "Requested Excluded Employee status" :
+              (data.epf === "Yes" ? "Continue PF with existing UAN" : "Enroll under TrooGood PF establishment")) + "</dd></div>";
+          rows += '<div class="r"><dt>Signature status</dt><dd>' + (hasInk ? "✓ Digitally signed on screen" : "Not signed") + "</dd></div>";
+        }
+
+        html += '<div class="rev"><h3><span>' + group[0] + '</span>' +
+          '<button type="button" class="linkbtn" data-goto="' + group[1] + '">✎ Edit</button></h3><dl>' + rows + "</dl></div>";
+      });
+
+      $("#review").innerHTML = html;
+      $$("#review [data-goto]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          go(parseInt(btn.getAttribute("data-goto"), 10));
+        });
+      });
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"]/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+      });
+    }
+
+    /* ==========================================================================
+       SUBMISSION TO GOOGLE SHEETS
+       ========================================================================== */
+    var payload = null;
+
+    function submit() {
+      if (submitted) return;
+
+      // Validate all previous steps
+      for (var i = 0; i < steps.length - 1; i++) {
+        if (!validate(i)) {
+          go(i);
+          validate(i);
+          return;
+        }
+      }
+
+      ensureSignature();
+      payload = collect();
+      payload.signatureImage = hasInk ? pad.toDataURL("image/png") : "";
+      submitted = true;
+
+      var nextBtn = $("#next");
+      nextBtn.disabled = true;
+      nextBtn.innerHTML = '<span class="spinner"></span> Saving PDF to Google Drive Folder…';
+
+      var submitUrl = (SUBMIT_URL || localStorage.getItem("troogood_submit_url") || "").trim();
+
+      if (submitUrl) {
+        // Post to Google Apps Script Web App
+        // Note: text/plain avoids CORS preflight OPTIONS request
+        fetch(submitUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        })
+          .then(function (res) {
+            return res.text();
+          })
+          .then(function (text) {
+            var parsed = null;
+            try {
+              parsed = JSON.parse(text);
+              if (parsed.reference) payload.reference = parsed.reference;
+            } catch (e) { }
+            finish(true, parsed);
+          })
+          .catch(function (err) {
+            // Google Apps Script redirect may trigger browser CORS on read, but server successfully receives POST.
+            // We attempt a no-cors post fallback to guarantee ingestion.
+            fetch(submitUrl, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(payload)
+            })
+              .then(function () {
+                finish(true, null);
+              })
+              .catch(function () {
+                finish(false, null);
+              });
+          });
+      } else {
+        // No URL configured yet -> complete locally
+        finish(false, null);
+      }
+    }
+
+    function finish(savedToDrive, resData) {
+      $$(".step").forEach(function (s) { s.classList.remove("on"); });
+      $("#bar").style.display = "none";
+      $(".rail-wrap").style.display = "none";
+      $("#done").classList.add("on");
+
+      $("#refOut").textContent = "Onboarding Reference: " + payload.reference;
+
+      var statusPill = $("#sheetStatusPill");
+      var driveBtn = $("#driveFolderBtn");
+      var targetFolder = (resData && resData.folderUrl)
+        ? resData.folderUrl
+        : "https://drive.google.com/drive/folders/1RPOKrjrlykX2GjkbQ0wwBFqiIXV8zs4t";
+      if (driveBtn) {
+        driveBtn.href = targetFolder;
+      }
+
+      if (savedToDrive) {
+        $("#doneHead").textContent = "Joining Form & PDF Saved to Google Drive!";
+        $("#doneMsg").textContent = "All onboarding details have been compiled into an official PDF document and saved inside a dedicated employee subfolder in your Google Drive.";
+        statusPill.className = "sheet-status-pill success";
+        statusPill.innerHTML = "<span>●</span> Saved to Google Drive (PDF & Subfolder Created)";
+      } else {
+        $("#doneHead").textContent = "Your Joining Form is Ready!";
+        $("#doneMsg").textContent = "Form completed. Download your filled copy below and submit it to HR" +
+          (HR_EMAIL ? " at " + HR_EMAIL : "") + " along with document proofs.";
+        statusPill.className = "sheet-status-pill fallback";
+        statusPill.innerHTML = "<span>●</span> Saved Locally (Ready for HR)";
+      }
+
+      $("#waBtn").style.display = HR_WHATSAPP ? "" : "none";
+      $("#sheet").innerHTML = sheetHTML();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function sheetHTML() {
+      var d = new Date();
+      var photoHeader = (payload && payload.photoImage)
+        ? '<div style="display:flex; gap:16px; align-items:center; margin-bottom:16px;">' +
+        '<img src="' + payload.photoImage + '" style="width:90px; height:114px; object-fit:cover; border:2px solid #00B5E8; border-radius:4px; display:block;" />' +
+        '<div><h2 style="margin:0 0 4px;">TrooGood Joining Form — ' + esc(payload.name || "") + '</h2>' +
+        '<p class="meta" style="margin:0;">Mformillet Foods Pvt Ltd · Unit ' + esc(payload.unit || "—") +
+        ' · Reference: ' + payload.reference + ' · Generated on ' +
+        d.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) + '</p></div></div>'
+        : '<h2>TrooGood Joining Form — ' + esc(payload.name || "") + '</h2>' +
+        '<p class="meta">Mformillet Foods Pvt Ltd · Unit ' + esc(payload.unit || "—") +
+        ' · Reference: ' + payload.reference + ' · Generated on ' +
+        d.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) + '</p>';
+
+      return photoHeader +
+        $("#review").innerHTML +
+        '<div class="rev"><h3>Digital Signature Record</h3><dl><div class="r"><dt>Signed by</dt><dd>' +
+        esc(payload.sig_name || payload.name || "") + " at " + esc(payload.sig_place || "") +
+        (payload.signatureImage ? '</dd></div></dl><div style="padding:0 18px 18px"><img class="sig" src="' +
+          payload.signatureImage + '" alt="Digital Signature"></div></div>' : "</dd></div></dl></div>");
+    }
+
+    function fullPage() {
+      return "<!doctype html><html><head><meta charset='utf-8'><title>Joining form — " +
+        esc(payload.name || "") + "</title><style>" +
+        "body{font-family:'Plus Jakarta Sans',Segoe UI,system-ui,Arial,sans-serif;color:#0f172a;max-width:820px;margin:30px auto;padding:0 20px;line-height:1.5}" +
+        "h2{margin:0 0 4px;font-size:20px;color:#0096c2}.meta{color:#64748b;font-size:13px;margin:0 0 20px}" +
+        ".rev{border:1px solid #e2e8f0;border-radius:10px;margin-bottom:14px;overflow:hidden}" +
+        ".rev h3{font-size:14px;margin:0;padding:11px 16px;background:#e6f8fd;color:#0096c2}" +
+        ".rev dl{margin:0;padding:6px 16px 14px}.rev .r{display:flex;gap:16px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13.5px}" +
+        ".rev dt{flex:0 0 40%;color:#64748b;font-weight:500}.rev dd{margin:0;flex:1;font-weight:600}" +
+        ".rev dd.blank{color:#94a3b8;font-weight:400;font-style:italic}" +
+        ".linkbtn{display:none}img.sig{max-width:260px;border-bottom:1.5px solid #0f172a;display:block;margin:8px 16px 16px}" +
+        "</style></head><body>" + sheetHTML() + "</body></html>";
+    }
+
+    $("#dlBtn").addEventListener("click", function () {
+      var stem = "troogood-joining-" + (payload.name || "employee").replace(/\s+/g, "-").toLowerCase() + "-" + payload.reference;
+      dl(new Blob([fullPage()], { type: "text/html" }), stem + ".html");
+      dl(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }), stem + ".json");
+    });
+
+    function dl(blob, filename) {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    }
+
+    $("#printBtn").addEventListener("click", function () { window.print(); });
+
+    $("#waBtn").addEventListener("click", function () {
+      var t = "TrooGood Employee Joining Form\n" +
+        "Name: " + payload.name + "\n" +
+        "Unit: " + payload.unit + " | Role: " + payload.desig + "\n" +
+        "Reference ID: " + payload.reference;
+      window.open("https://wa.me/" + HR_WHATSAPP + "?text=" + encodeURIComponent(t), "_blank");
+    });
+
+    /* ==========================================================================
+       GOOGLE SHEET CONFIGURATION MODAL
+       ========================================================================= */
+    var cfgModal = $("#cfgModal");
+    var cfgUrlInput = $("#cfgUrlInput");
+
+    var openBtn = $("#openCfgBtn");
+    if (openBtn) {
+      openBtn.addEventListener("click", function () {
+        cfgUrlInput.value = SUBMIT_URL || localStorage.getItem("troogood_submit_url") || "";
+        cfgModal.classList.add("open");
+      });
+    }
+
+    $("#closeCfgBtn").addEventListener("click", function () {
+      cfgModal.classList.remove("open");
+    });
+
+    $("#saveCfgBtn").addEventListener("click", function () {
+      var newUrl = cfgUrlInput.value.trim();
+      SUBMIT_URL = newUrl;
+      localStorage.setItem("troogood_submit_url", newUrl);
+      cfgModal.classList.remove("open");
+      alert("Google Sheet Web App URL updated successfully!");
+    });
+
+    /* ==========================================================================
+       URL PREFILL & INITIALIZATION
+       ========================================================================== */
+    (function () {
+      var q = new URLSearchParams(window.location.search);
+      ["code", "name", "unit", "desig", "doj", "reporting", "shift", "vendor"].forEach(function (k) {
+        var v = q.get(k);
+        if (v && form.elements[k]) form.elements[k].value = v;
+      });
+
+      var eng = q.get("engagement");
+      if (eng) {
+        var r = form.querySelector('[name="engagement"][value="' + eng + '"]');
+        if (r) {
+          r.checked = true;
+          r.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      }
+
+      var today = new Date();
+      $("#stampLine").textContent = "Digital signature timestamp: " +
+        today.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) + ".";
+
+      sizePad();
+      go(0);
+    })();
+  </script>
+</body>
+
+</html>
