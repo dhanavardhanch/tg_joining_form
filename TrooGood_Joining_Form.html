@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <!--
-  TrooGood / Mformillet Foods Pvt Ltd — Employee Onboarding & Joining Portal
+  TrooGood / Mformillet Foods Pvt Ltd — Employee Data Submission Form
   ==========================================================================
   CONNECTING TO GOOGLE SHEETS:
   1. Open your Google Sheet.
@@ -1143,7 +1143,7 @@
             onerror="this.style.display='none'" />
         </div>
         <h1 style="margin:0; font-size:23px; font-weight:800; color:#ffffff; letter-spacing:-0.02em;">Employee
-          Onboarding &amp; Joining Form</h1>
+          Data Submission Form</h1>
       </div>
     </div>
   </header>
@@ -1228,13 +1228,14 @@
                 <p class="err">Select your role or designation.</p>
               </label>
 
-              <!-- If others selected: Text box to fill custom role/designation -->
-              <div id="desigOtherWrap" class="hide" style="grid-column: 1 / -1; margin-top: -6px; margin-bottom: 6px;">
-                <label class="f" data-v="req" id="desigOtherLabel">
-                  <span class="lab"><b>Specify your Role / Designation</b><span class="req">*</span></span>
-                  <input type="text" name="desig_other" id="desigOtherInput"
-                    placeholder="Enter your specific role or designation (e.g. Supervisor, Executive)">
-                  <p class="err">Please enter your role or designation.</p>
+              <!-- Editable Designation Title - pre-filled from dropdown, editable -->
+              <div id="desigTitleWrap" class="hide" style="grid-column: 1 / -1; margin-top: -6px; margin-bottom: 6px;">
+                <label class="f" data-v="req" id="desigTitleLabel">
+                  <span class="lab"><b>Designation Title</b><span class="req">*</span></span>
+                  <input type="text" name="desig_title" id="desigTitleInput"
+                    placeholder="e.g. IT Executive, HR Manager — edit if needed">
+                  <p class="hint">Pre-filled from your selection. You can edit it (e.g. IT → IT Executive).</p>
+                  <p class="err">Please enter your designation title.</p>
                 </label>
               </div>
 
@@ -1242,79 +1243,6 @@
               <label class="f"><span class="lab"><b>Who you report to</b></span>
                 <input type="text" name="reporting" id="reportingInput" placeholder="Name of your supervisor / manager">
               </label>
-            </div>
-          </fieldset>
-          <fieldset>
-            <legend>Employment Engagement Type</legend>
-            <div class="f" data-v="req" data-name="engagement">
-              <div class="choice-set" role="radiogroup" aria-label="Engagement type">
-                <label class="choice"><input type="radio" name="engagement" value="MFM on-roll"><span>On TrooGood
-                    rolls</span></label>
-                <label class="choice"><input type="radio" name="engagement" value="Vendor / contractor"><span>Through
-                    contractor</span></label>
-                <label class="choice"><input type="radio" name="engagement"
-                    value="Consultant"><span>Consultant</span></label>
-              </div>
-              <p class="err">Please choose one engagement type.</p>
-            </div>
-            <div class="grid two" style="margin-top:16px">
-              <!-- Contractor — required when Through contractor selected -->
-              <label class="f hide" id="vendorWrap"><span class="lab"><b>Contractor / Agency name</b><span
-                    class="req">*</span></span>
-                <input type="text" name="vendor" id="vendorInput" placeholder="e.g. Rubicon, Baba, GS Manpower, Max">
-                <p class="err">Please enter the contractor / agency name.</p>
-              </label>
-              <label class="f"><span class="lab"><b>Shift timing</b></span>
-                <select name="shift">
-                  <option value="">Select shift</option>
-                  <option>Shift A</option>
-                  <option>Shift B</option>
-                  <option>General shift</option>
-                </select></label>
-            </div>
-          </fieldset>
-        </div>
-      </section>
-
-      <!-- STEP 2: Personal Details --------------------------------------------- -->
-      <section class="step" data-step="1">
-        <div class="step-card">
-          <div class="step-header">
-            <span class="step-badge">Section 2 of 6</span>
-            <h2>About You (Personal Information)</h2>
-            <p>Write your name exactly as it appears on your Aadhaar card. Exact spelling prevents PF and ESIC portal
-              rejection.</p>
-          </div>
-          <fieldset>
-            <legend>Employee Passport Photograph</legend>
-            <div class="photo-upload-wrap">
-              <div class="photo-preview-box" id="photoPreviewBox">
-                <div class="photo-placeholder" id="photoPlaceholder">
-                  <span style="font-size:28px;">📷</span>
-                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:4px;">Passport
-                    Photo</span>
-                </div>
-                <img id="photoImg" class="hide" alt="Uploaded photograph" />
-              </div>
-              <div class="photo-actions">
-                <div style="display:flex; gap:10px; flex-wrap:wrap; width:100%;">
-                  <label class="btn primary"
-                    style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
-                    📸 Take Selfie (Camera)
-                    <input type="file" id="photoCameraInput" accept="image/*" capture="user" style="display:none;" />
-                  </label>
-                  <label class="btn ghost"
-                    style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
-                    📁 Choose Gallery Photo
-                    <input type="file" id="photoGalleryInput" accept="image/*" style="display:none;" />
-                  </label>
-                </div>
-                <button type="button" class="linkbtn hide" id="removePhotoBtn"
-                  style="color:var(--danger); font-size:13px; font-weight:600; padding:4px 0;">✕ Remove Photo</button>
-                <p class="hint" style="margin-top:4px;">Tap <b>Take Selfie</b> to open your mobile camera directly, or
-                  <b>Choose Gallery Photo</b> to upload an existing picture.
-                </p>
-              </div>
             </div>
           </fieldset>
           <fieldset>
@@ -1588,13 +1516,6 @@
                     placeholder="12 digit UAN">
                   <p class="err">A UAN must have exactly 12 digits.</p>
                 </label>
-                <label class="f"><span class="lab"><b>Old PF account / member ID</b></span>
-                  <input type="text" name="pf_account" class="mono"
-                    placeholder="e.g. AP/HYD/0012345/000/0001234"></label>
-                <label class="f"><span class="lab"><b>Name of previous establishment</b></span>
-                  <input type="text" name="prev_estb" placeholder="Company establishment name"></label>
-                <label class="f"><span class="lab"><b>Scheme certificate / PPO number (if any)</b></span>
-                  <input type="text" name="ppo" placeholder="Scheme certificate or PPO number"></label>
               </div>
             </fieldset>
           </div>
@@ -1605,13 +1526,12 @@
                 <input type="text" name="esic" class="mono" placeholder="Leave blank if newly enrolling"></label>
 
               <!-- Health Insurance -->
-              <div class="f" data-v="req" data-name="health_ins">
-                <span class="lab"><b>Do you have Health Insurance?</b><span class="req">*</span></span>
+              <div class="f" data-name="health_ins">
+                <span class="lab"><b>Do you have Health Insurance?</b></span>
                 <div class="choice-set" role="radiogroup" aria-label="Health Insurance">
                   <label class="choice"><input type="radio" name="health_ins" value="No"><span>No</span></label>
                   <label class="choice"><input type="radio" name="health_ins" value="Yes"><span>Yes</span></label>
                 </div>
-                <p class="err">Please select an option.</p>
               </div>
               <div id="healthInsWrap" class="hide" style="grid-column:1/-1">
                 <label class="f" data-v="req"><span class="lab"><b>Health Insurance Number</b><span
@@ -1621,13 +1541,6 @@
                   <p class="err">Please enter your health insurance number.</p>
                 </label>
               </div>
-              <label class="f"><span class="lab"><b>Are you an international / foreign worker?</b></span>
-                <select name="intl">
-                  <option>No</option>
-                  <option>Yes</option>
-                </select>
-                <p class="hint">Select 'Yes' only if you hold citizenship/passport of a country other than India.</p>
-              </label>
             </div>
           </fieldset>
         </div>
@@ -1654,8 +1567,6 @@
                 <input type="text" name="nom_rel" placeholder="e.g. Spouse, Mother, Father, Son">
                 <p class="err">Enter relationship with nominee.</p>
               </label>
-              <label class="f"><span class="lab"><b>Nominee date of birth</b></span>
-                <input type="date" name="nom_dob"></label>
             </div>
           </fieldset>
           <fieldset>
@@ -1944,9 +1855,9 @@
        VALIDATION LOGIC (Strictly preserving original rule definitions)
        ========================================================================== */
     var textTitleFields = [
-      "name", "father", "desig", "reporting", "vendor",
+      "name", "father", "desig", "desig_title", "reporting", "vendor",
       "languages", "addr_present", "addr_permanent", "emg_name", "emg_rel",
-      "bank", "prev_employer", "prev_estb", "nom_name", "nom_rel", "sig_name", "sig_place"
+      "bank", "prev_employer", "nom_name", "nom_rel", "sig_name", "sig_place"
     ];
 
     var RULES = {
@@ -2016,10 +1927,9 @@
         } else if (input) {
           var fn = RULES[kind] || RULES.req;
           ok = fn(input.value);
-          if (ok && input.tagName !== "SELECT" && typeof textTitleFields !== "undefined" && (textTitleFields.indexOf(input.name) > -1 || input.name === "desig_other") && input.value.trim().length > 0) {
-            var words = input.value.trim().split(/\s+/);
-            var allCaps = words.every(function (w) { return /^[A-Z0-9]/.test(w); });
-            if (!allCaps) {
+          if (ok && input.tagName !== "SELECT" && typeof textTitleFields !== "undefined" && (textTitleFields.indexOf(input.name) > -1 || input.name === "desig_title") && input.value.trim().length > 0) {
+            var firstCharCaps = /^[A-Z0-9]/.test(input.value.trim());
+            if (!firstCharCaps) {
               ok = false;
               var errEl = el.querySelector(".err");
               if (errEl) errEl.textContent = "First letter must be capital (e.g. 'Dhana', not 'dhana').";
@@ -2095,16 +2005,14 @@
         if (isVendor) { vw.setAttribute("data-v", "req"); } else { vw.removeAttribute("data-v"); }
       }
       if (n === "desig") {
-        var selVal = (form.elements["desig"].value || "").toLowerCase();
-        var isOther = (selVal === "others");
-        var dow = $("#desigOtherWrap");
-        if (dow) {
-          dow.classList.toggle("hide", !isOther);
-          var inpOther = $("#desigOtherInput");
-          if (!isOther && inpOther) {
-            inpOther.value = "";
-            var lbl = $("#desigOtherLabel");
-            if (lbl) lbl.classList.remove("bad");
+        var selVal2 = (form.elements["desig"].value || "");
+        var titleWrap = $("#desigTitleWrap");
+        var titleInp = $("#desigTitleInput");
+        if (titleWrap) titleWrap.classList.toggle("hide", !selVal2);
+        if (titleInp && selVal2) {
+          if (!titleInp.value || titleInp.dataset.lastPrefill === titleInp.value) {
+            titleInp.value = selVal2;
+            titleInp.dataset.lastPrefill = selVal2;
           }
         }
       }
@@ -2456,19 +2364,19 @@
       emg_name: "Emergency contact", emg_rel: "Relationship", emg_mobile: "Emergency mobile",
       aadhaar: "Aadhaar number", pan: "PAN number", bank: "Bank and branch", account: "Account number", ifsc: "IFSC", docs: "Documents sent",
       worked: "Worked before", prev_employer: "Previous employer", prev_last_day: "Last working day",
-      epf: "Had PF account before", eps: "Was in EPS 1995", uan: "UAN", pf_account: "Old PF account",
-      prev_estb: "Earlier establishment", ppo: "Scheme certificate / PPO", esic: "ESIC number",
-      health_ins: "Health Insurance", health_ins_no: "Health Insurance Number", intl: "International worker",
-      nom_name: "Nominee", nom_rel: "Nominee relationship", nom_dob: "Nominee date of birth",
+      epf: "Had PF account before", eps: "Was in EPS 1995", uan: "UAN", esic: "ESIC number",
+      health_ins: "Health Insurance", health_ins_no: "Health Insurance Number",
+      desig_title: "Designation Title",
+      nom_name: "Nominee", nom_rel: "Nominee relationship",
       sig_name: "Signed by", sig_place: "Place"
     };
 
     var GROUPS = [
-      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "reporting", "engagement", "vendor", "shift"]],
+      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "desig_title", "reporting", "engagement", "vendor", "shift"]],
       ["Personal & Contact", 1, ["name", "father", "dob", "gender", "marital", "mobile", "altmobile", "email", "languages", "blood", "addr_present", "addr_permanent", "emg_name", "emg_rel", "emg_mobile"]],
       ["Bank & Identification", 2, ["aadhaar", "pan", "bank", "account", "ifsc", "docs"]],
-      ["Provident Fund & Social Security", 3, ["worked", "prev_employer", "prev_last_day", "epf", "eps", "uan", "pf_account", "prev_estb", "ppo", "esic", "health_ins", "health_ins_no", "intl"]],
-      ["Nominee & Family Members", 4, ["nom_name", "nom_rel", "nom_dob"]],
+      ["Provident Fund & Social Security", 3, ["worked", "prev_employer", "prev_last_day", "epf", "eps", "uan", "esic", "health_ins", "health_ins_no"]],
+      ["Nominee & Family Members", 4, ["nom_name", "nom_rel"]],
       ["Declarations & Signature", 5, ["sig_name", "sig_place"]]
     ];
 
@@ -2484,10 +2392,10 @@
         }
       });
 
-      // Special handling for designation if "others" chosen
-      if (out.desig && out.desig.toLowerCase() === "others") {
-        var otherVal = val("desig_other");
-        out.desig = otherVal ? otherVal : "others";
+      // Use the editable designation title field as the final designation value for the sheet
+      var titleVal = val("desig_title");
+      if (titleVal) {
+        out.desig = titleVal;
       }
 
       // Special handling for Health Insurance: if not Yes, ensure NA
