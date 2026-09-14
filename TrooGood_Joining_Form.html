@@ -1245,6 +1245,48 @@
               </label>
             </div>
           </fieldset>
+        </div>
+      </section>
+
+      <!-- STEP 2: Personal & Contact ---------------------------------------------- -->
+      <section class="step" data-step="1">
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Section 2 of 6</span>
+            <h2>Personal & Contact Details</h2>
+            <p>Provide your personal details, emergency contact, address, and upload your passport size photograph.</p>
+          </div>
+          <fieldset>
+            <legend>Passport Size Photograph</legend>
+            <div class="photo-upload-wrap">
+              <div class="photo-preview-box" id="photoPreviewBox" style="width:90px; height:110px; flex:0 0 90px;">
+                <div class="photo-placeholder" id="photoPlaceholder">
+                  <span style="font-size:24px;">👤</span>
+                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:2px;">Passport Photo</span>
+                </div>
+                <img id="photoImg" class="hide" alt="Uploaded Photo"
+                  style="width:100%; height:100%; object-fit:cover; background:#ffffff;" />
+              </div>
+              <div class="photo-actions">
+                <div style="display:flex; gap:10px; flex-wrap:wrap; width:100%;">
+                  <label class="btn primary"
+                    style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                    📷 Take Photo (Camera)
+                    <input type="file" id="photoCameraInput" accept="image/*" capture="user"
+                      style="display:none;" />
+                  </label>
+                  <label class="btn ghost"
+                    style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                    📁 Upload Photo Image
+                    <input type="file" id="photoGalleryInput" accept="image/*" style="display:none;" />
+                  </label>
+                </div>
+                <button type="button" class="linkbtn hide" id="removePhotoBtn"
+                  style="color:var(--danger); font-size:12.5px; font-weight:600; padding:4px 0;">✕ Remove Photo</button>
+                <p class="hint" style="margin-top:4px;">Tap <b>Take Photo</b> to take a selfie / passport photo, or <b>Upload Photo Image</b> from gallery.</p>
+              </div>
+            </div>
+          </fieldset>
           <fieldset>
             <div class="grid two">
               <label class="f wide" data-v="name"><span class="lab"><b>Candidate Full Name (Your Name)</b><span
