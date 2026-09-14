@@ -1201,7 +1201,7 @@
               </label>
 
               <!-- Designation dropdown with 19 roles -->
-              <div class="f" data-v="req" id="desigWrap"><span class="lab"><b>Your role / Designation</b><span
+              <label class="f" data-v="req" id="desigWrap"><span class="lab"><b>Your role / Designation</b><span
                     class="req">*</span></span>
                 <select name="desig" id="desigSelect">
                   <option value="">Select your designation</option>
@@ -1225,12 +1225,17 @@
                   <option value="Institutional">Institutional</option>
                   <option value="others">others</option>
                 </select>
-                <div id="desigOtherWrap" class="hide" style="margin-top:8px;">
-                  <input type="text" name="desig_other" id="desigOtherInput"
-                    placeholder="Specify your role / designation">
-                  <p class="hint">Please specify your designation.</p>
-                </div>
                 <p class="err">Select your role or designation.</p>
+              </label>
+
+              <!-- If others selected: Text box to fill custom role/designation -->
+              <div id="desigOtherWrap" class="hide" style="grid-column: 1 / -1; margin-top: -6px; margin-bottom: 6px;">
+                <label class="f" data-v="req" id="desigOtherLabel">
+                  <span class="lab"><b>Specify your Role / Designation</b><span class="req">*</span></span>
+                  <input type="text" name="desig_other" id="desigOtherInput"
+                    placeholder="Enter your specific role or designation (e.g. Supervisor, Executive)">
+                  <p class="err">Please enter your role or designation.</p>
+                </label>
               </div>
 
               <!-- Reporting Manager -->
@@ -1314,10 +1319,12 @@
           </fieldset>
           <fieldset>
             <div class="grid two">
-              <label class="f wide" data-v="req"><span class="lab"><b>Full name (as on Aadhaar Card)</b><span
+              <label class="f wide" data-v="name"><span class="lab"><b>Candidate Full Name (Your Name)</b><span
                     class="req">*</span></span>
-                <input type="text" name="name" autocomplete="name" placeholder="Full name matching Aadhaar">
-                <p class="err">Enter your full name as per Aadhaar.</p>
+                <input type="text" name="name" id="candidateNameInput" autocomplete="name"
+                  placeholder="e.g. Dhana Vardhan (Enter your Name, NOT Aadhaar number)">
+                <p class="hint">Enter your actual personal name (letters only). Matches name spelling on your Aadhaar card.</p>
+                <p class="err">Please enter your actual name in letters (e.g. 'Dhana Vardhan'). Do not enter numbers.</p>
               </label>
               <label class="f" data-v="req"><span class="lab"><b>Father's or husband's name</b><span
                     class="req">*</span></span>
@@ -1780,10 +1787,6 @@
         </div>
 
         <div class="acts">
-          <a id="driveFolderBtn" href="https://drive.google.com/drive/folders/1RPOKrjrlykX2GjkbQ0wwBFqiIXV8zs4t"
-            target="_blank" class="btn primary" style="text-decoration:none;">
-            📁 Open Employee Subfolder in Google Drive
-          </a>
           <button type="button" class="btn ghost" id="dlBtn">
             📥 Download Local Form Backup
           </button>
@@ -1907,7 +1910,7 @@
       backBtn.style.visibility = idx === 0 ? "hidden" : "visible";
 
       var nextBtn = $("#next");
-      nextBtn.textContent = (idx === steps.length - 1) ? "Submit to Google Sheet ✓" : "Continue →";
+      nextBtn.textContent = (idx === steps.length - 1) ? "Submit" : "Continue →";
 
       updateProgress(idx);
 
@@ -1948,6 +1951,14 @@
 
     var RULES = {
       req: function (v) { return (v || "").trim().length > 0; },
+      name: function (v) {
+        var t = (v || "").trim();
+        if (t.length < 2) return false;
+        // Must contain alphabetic letters and must NOT be only digits/Aadhaar
+        if (/^\d+$/.test(t.replace(/\s/g, ""))) return false;
+        if (!/[A-Za-z]/.test(t)) return false;
+        return true;
+      },
       mobile: function (v) { return /^[6-9]\d{9}$/.test((v || "").trim()); },
       email: function (v) { var t = (v || "").trim(); return t === "" || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(t); },
       aadhaar: function (v) { return /^\d{12}$/.test((v || "").replace(/\s/g, "")); },
@@ -2084,17 +2095,16 @@
         if (isVendor) { vw.setAttribute("data-v", "req"); } else { vw.removeAttribute("data-v"); }
       }
       if (n === "desig") {
-        var isOther = (form.elements["desig"].value || "").toLowerCase() === "others";
+        var selVal = (form.elements["desig"].value || "").toLowerCase();
+        var isOther = (selVal === "others");
         var dow = $("#desigOtherWrap");
         if (dow) {
           dow.classList.toggle("hide", !isOther);
-          if (isOther) {
-            dow.setAttribute("data-v", "req");
-          } else {
-            dow.removeAttribute("data-v");
-            dow.classList.remove("bad");
-            var inpOther = $("#desigOtherInput");
-            if (inpOther) inpOther.value = "";
+          var inpOther = $("#desigOtherInput");
+          if (!isOther && inpOther) {
+            inpOther.value = "";
+            var lbl = $("#desigOtherLabel");
+            if (lbl) lbl.classList.remove("bad");
           }
         }
       }
@@ -2629,7 +2639,7 @@
 
       var nextBtn = $("#next");
       nextBtn.disabled = true;
-      nextBtn.innerHTML = '<span class="spinner"></span> Saving PDF to Google Drive Folder…';
+      nextBtn.innerHTML = '<span class="spinner"></span> Submitting…';
 
       var submitUrl = (SUBMIT_URL || localStorage.getItem("troogood_submit_url") || "").trim();
 
@@ -2692,10 +2702,10 @@
       }
 
       if (savedToDrive) {
-        $("#doneHead").textContent = "Joining Form & PDF Saved to Google Drive!";
-        $("#doneMsg").textContent = "All onboarding details have been compiled into an official PDF document and saved inside a dedicated employee subfolder in your Google Drive.";
+        $("#doneHead").textContent = "Joining Form Submitted Successfully!";
+        $("#doneMsg").textContent = "Thank you! Your onboarding details and documents have been securely received by TrooGood HR.";
         statusPill.className = "sheet-status-pill success";
-        statusPill.innerHTML = "<span>●</span> Saved to Google Drive (PDF & Subfolder Created)";
+        statusPill.innerHTML = "<span>●</span> Submitted Successfully (HR Records Updated)";
       } else {
         $("#doneHead").textContent = "Your Joining Form is Ready!";
         $("#doneMsg").textContent = "Form completed. Download your filled copy below and submit it to HR" +
@@ -2970,6 +2980,24 @@
         today.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) + ".";
 
       sizePad();
+
+      // Dedicated immediate listener for designation change (especially on mobile devices)
+      var dSel = document.getElementById("desigSelect");
+      if (dSel) {
+        function checkDesigOther() {
+          var isO = (dSel.value || "").toLowerCase() === "others";
+          var wrap = document.getElementById("desigOtherWrap");
+          if (wrap) wrap.classList.toggle("hide", !isO);
+          if (isO) {
+            setTimeout(function() {
+              var inp = document.getElementById("desigOtherInput");
+              if (inp) inp.focus();
+            }, 50);
+          }
+        }
+        dSel.addEventListener("change", checkDesigOther);
+        dSel.addEventListener("input", checkDesigOther);
+      }
 
       restoreDraft();
     })();
