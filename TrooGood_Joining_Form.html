@@ -1250,21 +1250,23 @@
               <div class="photo-preview-box" id="photoPreviewBox">
                 <div class="photo-placeholder" id="photoPlaceholder">
                   <span style="font-size:28px;">📷</span>
-                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:4px;">Passport
-                    Photo</span>
+                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:4px;">Passport Photo</span>
                 </div>
                 <img id="photoImg" class="hide" alt="Uploaded photograph" />
               </div>
               <div class="photo-actions">
-                <label class="btn primary"
-                  style="cursor:pointer; font-size:13.5px; padding:10px 18px; margin:0; display:inline-flex; align-items:center; gap:8px;">
-                  📷 Take / Upload Photo
-                  <input type="file" id="photoInput" accept="image/*" style="display:none;" />
-                </label>
-                <button type="button" class="linkbtn hide" id="removePhotoBtn"
-                  style="color:var(--danger); font-size:13px; font-weight:600; padding:4px 0;">✕ Remove Photo</button>
-                <p class="hint" style="margin-top:4px;">Upload your photo from your mobile camera or gallery. It will be
-                  saved in your Drive folder and printed at the top-left of your joining PDF.</p>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; width:100%;">
+                  <label class="btn primary" style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                    📸 Take Selfie (Camera)
+                    <input type="file" id="photoCameraInput" accept="image/*" capture="user" style="display:none;" />
+                  </label>
+                  <label class="btn ghost" style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                    📁 Choose Gallery Photo
+                    <input type="file" id="photoGalleryInput" accept="image/*" style="display:none;" />
+                  </label>
+                </div>
+                <button type="button" class="linkbtn hide" id="removePhotoBtn" style="color:var(--danger); font-size:13px; font-weight:600; padding:4px 0;">✕ Remove Photo</button>
+                <p class="hint" style="margin-top:4px;">Tap <b>Take Selfie</b> to open your mobile camera directly, or <b>Choose Gallery Photo</b> to upload an existing picture.</p>
               </div>
             </div>
           </fieldset>
@@ -1390,29 +1392,29 @@
             <p>Your monthly salary will be credited into this account. Please verify with your bank passbook or
               cancelled cheque.</p>
           </div>
-          <fieldset>
+                    <fieldset>
             <legend>Aadhaar Card Document / Front Photo</legend>
             <div class="photo-upload-wrap">
               <div class="photo-preview-box" id="aadhaarPreviewBox" style="width:130px; height:85px; flex:0 0 130px;">
                 <div class="photo-placeholder" id="aadhaarPlaceholder">
                   <span style="font-size:24px;">🪪</span>
-                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:2px;">Aadhaar
-                    Front</span>
+                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:2px;">Aadhaar Front</span>
                 </div>
-                <img id="aadhaarImg" class="hide" alt="Uploaded Aadhaar card"
-                  style="width:100%; height:100%; object-fit:contain; background:#ffffff;" />
+                <img id="aadhaarImg" class="hide" alt="Uploaded Aadhaar card" style="width:100%; height:100%; object-fit:contain; background:#ffffff;" />
               </div>
               <div class="photo-actions">
-                <label class="btn primary"
-                  style="cursor:pointer; font-size:13px; padding:9px 16px; margin:0; display:inline-flex; align-items:center; gap:8px;">
-                  🪪 Take / Upload Aadhaar Card
-                  <input type="file" id="aadhaarInput" accept="image/*" style="display:none;" />
-                </label>
-                <button type="button" class="linkbtn hide" id="removeAadhaarBtn"
-                  style="color:var(--danger); font-size:12.5px; font-weight:600; padding:4px 0;">✕ Remove Aadhaar
-                  Photo</button>
-                <p class="hint" style="margin-top:4px;">Take a photo of your Aadhaar card front or upload from gallery.
-                  It will be saved into your employee Drive folder.</p>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; width:100%;">
+                  <label class="btn primary" style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                    📸 Scan Card (Camera)
+                    <input type="file" id="aadhaarCameraInput" accept="image/*" capture="environment" style="display:none;" />
+                  </label>
+                  <label class="btn ghost" style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                    📁 Upload Aadhaar Image
+                    <input type="file" id="aadhaarGalleryInput" accept="image/*" style="display:none;" />
+                  </label>
+                </div>
+                <button type="button" class="linkbtn hide" id="removeAadhaarBtn" style="color:var(--danger); font-size:12.5px; font-weight:600; padding:4px 0;">✕ Remove Aadhaar Photo</button>
+                <p class="hint" style="margin-top:4px;">Tap <b>Scan Card</b> to take a clear camera photo of your Aadhaar front, or <b>Upload Aadhaar Image</b> from gallery.</p>
               </div>
             </div>
           </fieldset>
@@ -2070,76 +2072,107 @@
     $("#addFam").addEventListener("click", function () { addFam(); });
     addFam(); // Member 1
     /* ==========================================================================
-       EMPLOYEE PASSPORT PHOTOGRAPH HANDLER
+       MEDIA UPLOAD HANDLERS (CAMERA & GALLERY COMPRESSION)
        ========================================================================== */
     var photoDataUrl = "";
-    var photoInput = $("#photoInput");
+    var aadhaarDataUrl = "";
+
     var photoImg = $("#photoImg");
     var photoPlaceholder = $("#photoPlaceholder");
     var removePhotoBtn = $("#removePhotoBtn");
 
-    if (photoInput) {
-      photoInput.addEventListener("change", function (e) {
-        var file = e.target.files && e.target.files[0];
-        if (!file) return;
-
-        var reader = new FileReader();
-        reader.onload = function (evt) {
-          var img = new Image();
-          img.onload = function () {
-            // Compress and format to passport dimensions (max 360x450 px)
-            var canvas = document.createElement("canvas");
-            var maxW = 360;
-            var maxH = 450;
-            var w = img.width;
-            var h = img.height;
-
-            if (w > maxW || h > maxH) {
-              var ratio = Math.min(maxW / w, maxH / h);
-              w = Math.round(w * ratio);
-              h = Math.round(h * ratio);
-            }
-
-            canvas.width = w;
-            canvas.height = h;
-            var cCtx = canvas.getContext("2d");
-            cCtx.drawImage(img, 0, 0, w, h);
-
-            photoDataUrl = canvas.toDataURL("image/jpeg", 0.85);
-            if (photoImg) {
-              photoImg.src = photoDataUrl;
-              photoImg.classList.remove("hide");
-            }
-            if (photoPlaceholder) {
-              photoPlaceholder.classList.add("hide");
-            }
-            if (removePhotoBtn) {
-              removePhotoBtn.classList.remove("hide");
-            }
-
-            // Auto-check "Photographs" in documents list
-            var photoDocChk = form.querySelector('input[name="docs"][value="Photographs"]');
-            if (photoDocChk) photoDocChk.checked = true;
-          };
-          img.src = evt.target.result;
+    function processImageFile(file, maxW, maxH, callback) {
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function (evt) {
+        var img = new Image();
+        img.onload = function () {
+          var w = img.width;
+          var h = img.height;
+          if (w > maxW || h > maxH) {
+            var ratio = Math.min(maxW / w, maxH / h);
+            w = Math.round(w * ratio);
+            h = Math.round(h * ratio);
+          }
+          var canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          var ctx2 = canvas.getContext("2d");
+          ctx2.drawImage(img, 0, 0, w, h);
+          var compressedUrl = canvas.toDataURL("image/jpeg", 0.85);
+          callback(compressedUrl);
         };
-        reader.readAsDataURL(file);
-      });
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
 
-      if (removePhotoBtn) {
-        removePhotoBtn.addEventListener("click", function () {
-          photoDataUrl = "";
-          if (photoImg) {
-            photoImg.src = "";
-            photoImg.classList.add("hide");
-          }
-          if (photoPlaceholder) {
-            photoPlaceholder.classList.remove("hide");
-          }
-          removePhotoBtn.classList.add("hide");
-          photoInput.value = "";
-        });
-      }
+    // 1. Passport Photo (Camera & Gallery)
+    function handlePhotoUpload(e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      processImageFile(file, 360, 450, function (url) {
+        photoDataUrl = url;
+        if (photoImg) { photoImg.src = url; photoImg.classList.remove("hide"); }
+        if (photoPlaceholder) { photoPlaceholder.classList.add("hide"); }
+        if (removePhotoBtn) { removePhotoBtn.classList.remove("hide"); }
+        var photoDocChk = form.querySelector('input[name="docs"][value="Photographs"]');
+        if (photoDocChk) photoDocChk.checked = true;
+        saveDraft();
+      });
+    }
+
+    var photoCameraInput = $("#photoCameraInput");
+    var photoGalleryInput = $("#photoGalleryInput");
+    if (photoCameraInput) photoCameraInput.addEventListener("change", handlePhotoUpload);
+    if (photoGalleryInput) photoGalleryInput.addEventListener("change", handlePhotoUpload);
+
+    if (removePhotoBtn) {
+      removePhotoBtn.addEventListener("click", function () {
+        photoDataUrl = "";
+        if (photoImg) { photoImg.src = ""; photoImg.classList.add("hide"); }
+        if (photoPlaceholder) { photoPlaceholder.classList.remove("hide"); }
+        removePhotoBtn.classList.add("hide");
+        if (photoCameraInput) photoCameraInput.value = "";
+        if (photoGalleryInput) photoGalleryInput.value = "";
+        saveDraft();
+      });
+    }
+
+    // 2. Aadhaar Card Front Photo (Camera & Gallery)
+    var aadhaarImg = $("#aadhaarImg");
+    var aadhaarPlaceholder = $("#aadhaarPlaceholder");
+    var removeAadhaarBtn = $("#removeAadhaarBtn");
+
+    function handleAadhaarUpload(e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      processImageFile(file, 900, 600, function (url) {
+        aadhaarDataUrl = url;
+        if (aadhaarImg) { aadhaarImg.src = url; aadhaarImg.classList.remove("hide"); }
+        if (aadhaarPlaceholder) { aadhaarPlaceholder.classList.add("hide"); }
+        if (removeAadhaarBtn) { removeAadhaarBtn.classList.remove("hide"); }
+        var aadhaarDocChk = form.querySelector('input[name="docs"][value="Aadhaar copy"]');
+        if (aadhaarDocChk) aadhaarDocChk.checked = true;
+        saveDraft();
+      });
+    }
+
+    var aadhaarCameraInput = $("#aadhaarCameraInput");
+    var aadhaarGalleryInput = $("#aadhaarGalleryInput");
+    if (aadhaarCameraInput) aadhaarCameraInput.addEventListener("change", handleAadhaarUpload);
+    if (aadhaarGalleryInput) aadhaarGalleryInput.addEventListener("change", handleAadhaarUpload);
+
+    if (removeAadhaarBtn) {
+      removeAadhaarBtn.addEventListener("click", function () {
+        aadhaarDataUrl = "";
+        if (aadhaarImg) { aadhaarImg.src = ""; aadhaarImg.classList.add("hide"); }
+        if (aadhaarPlaceholder) { aadhaarPlaceholder.classList.remove("hide"); }
+        removeAadhaarBtn.classList.add("hide");
+        if (aadhaarCameraInput) aadhaarCameraInput.value = "";
+        if (aadhaarGalleryInput) aadhaarGalleryInput.value = "";
+        saveDraft();
+      });
     }
 
     /* ==========================================================================
@@ -2396,52 +2429,73 @@
     }
 
     function buildReview() {
-      var data = collect();
-      var html = "";
+      try {
+        var data = collect();
+        var htmlStr = "";
 
-      GROUPS.forEach(function (group) {
-        var rows = "";
-        if (group[0] === "Personal & Contact" && data.photoImage) {
-          rows += '<div class="r"><dt>Passport Photo</dt><dd><img src="' + data.photoImage + '" style="width:75px; height:95px; object-fit:cover; border:2px solid var(--primary); border-radius:4px; display:block;" alt="Photo" /></dd></div>';
-        }
-        if (group[0] === "Bank & Identification" && data.aadhaarImage) {
-          rows += '<div class="r"><dt>Aadhaar Card</dt><dd><img src="' + data.aadhaarImage + '" style="width:120px; height:80px; object-fit:contain; border:2px solid var(--primary); border-radius:4px; display:block; background:#fff;" alt="Aadhaar Card" /></dd></div>';
-        }
-        group[2].forEach(function (k) {
-          if (k === "vendor" && data.engagement !== "Vendor / contractor") return;
-          if (["eps", "uan", "pf_account", "prev_estb", "ppo"].indexOf(k) > -1 && data.epf !== "Yes") return;
-          if (["prev_employer", "prev_last_day"].indexOf(k) > -1 && data.worked !== "Yes") return;
-          var v = data[k];
-          rows += '<div class="r"><dt>' + (LABELS[k] || k) + "</dt><dd" + (v ? "" : ' class="blank"') + ">" +
-            esc(v || "Not provided") + "</dd></div>";
+        GROUPS.forEach(function (group) {
+          var rows = "";
+          if (group[0] === "Personal & Contact" && (photoDataUrl || data.photoImage)) {
+            var pSrc = photoDataUrl || data.photoImage;
+            rows += '<div class="r"><dt>Passport Photo</dt><dd><img src="' + pSrc + '" style="width:75px; height:95px; object-fit:cover; border:2px solid var(--primary); border-radius:4px; display:block;" alt="Photo" /></dd></div>';
+          }
+          if (group[0] === "Bank & Identification" && (aadhaarDataUrl || data.aadhaarImage)) {
+            var aSrc = aadhaarDataUrl || data.aadhaarImage;
+            rows += '<div class="r"><dt>Aadhaar Card</dt><dd><img src="' + aSrc + '" style="width:130px; height:85px; object-fit:contain; border:2px solid var(--primary); border-radius:4px; display:block; background:#fff;" alt="Aadhaar Card" /></dd></div>';
+          }
+          group[2].forEach(function (k) {
+            if (k === "vendor" && data.engagement !== "Vendor / contractor") return;
+            if (["eps", "uan", "pf_account", "prev_estb", "ppo"].indexOf(k) > -1 && data.epf !== "Yes") return;
+            if (["prev_employer", "prev_last_day"].indexOf(k) > -1 && data.worked !== "Yes") return;
+            var v = data[k];
+            rows += '<div class="r"><dt>' + (LABELS[k] || k) + "</dt><dd" + (v ? "" : ' class="blank"') + ">" +
+              esc(v || "Not provided") + "</dd></div>";
+          });
+
+          if (group[0] === "Nominee & Family Members" && data.family && data.family.length) {
+            data.family.forEach(function (f, i) {
+              rows += '<div class="r"><dt>Family Member ' + (i + 1) + "</dt><dd>" +
+                esc(f.name + (f.relation ? " (" + f.relation + ")" : "") + (f.dob ? ", born " + f.dob : "")) + "</dd></div>";
+            });
+          }
+
+          if (group[0] === "Declarations & Signature") {
+            var countAccepted = 0;
+            if (data.declarations) {
+              countAccepted = Object.keys(data.declarations).filter(function (k) { return data.declarations[k]; }).length;
+            }
+            rows += '<div class="r"><dt>Declarations Accepted</dt><dd>' + countAccepted + " statutory undertakings confirmed</dd></div>";
+            rows += '<div class="r"><dt>PF Exemption Request</dt><dd>' +
+              (data.declarations && data.declarations.dec_pf_exclude ? "Requested Excluded Employee status" :
+                (data.epf === "Yes" ? "Continue PF with existing UAN" : "Enroll under TrooGood PF establishment")) + "</dd></div>";
+            rows += '<div class="r"><dt>Signature status</dt><dd>' + (hasInk ? "✓ Digitally signed on screen" : "Not signed") + "</dd></div>";
+            if (hasInk && pad) {
+              try {
+                rows += '<div class="r"><dt>Signature Preview</dt><dd><img src="' + pad.toDataURL("image/png") + '" style="max-width:180px; max-height:60px; border-bottom:1.5px solid #0f172a;" alt="Signature" /></dd></div>';
+              } catch(sigErr){}
+            }
+          }
+
+          htmlStr += '<div class="rev"><h3><span>' + group[0] + '</span>' +
+            '<button type="button" class="linkbtn" data-goto="' + group[1] + '">✎ Edit</button></h3><dl>' + rows + "</dl></div>";
         });
 
-        if (group[0] === "Nominee & Family Members" && data.family.length) {
-          data.family.forEach(function (f, i) {
-            rows += '<div class="r"><dt>Family Member ' + (i + 1) + "</dt><dd>" +
-              esc(f.name + (f.relation ? " (" + f.relation + ")" : "") + (f.dob ? ", born " + f.dob : "")) + "</dd></div>";
+        var revEl = $("#review");
+        if (revEl) {
+          revEl.innerHTML = htmlStr;
+          $$("#review [data-goto]").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              go(parseInt(btn.getAttribute("data-goto"), 10));
+            });
           });
         }
-
-        if (group[0] === "Declarations & Signature") {
-          var countAccepted = Object.keys(data.declarations).filter(function (k) { return data.declarations[k]; }).length;
-          rows += '<div class="r"><dt>Declarations Accepted</dt><dd>' + countAccepted + " statutory undertakings confirmed</dd></div>";
-          rows += '<div class="r"><dt>PF Exemption Request</dt><dd>' +
-            (data.declarations.dec_pf_exclude ? "Requested Excluded Employee status" :
-              (data.epf === "Yes" ? "Continue PF with existing UAN" : "Enroll under TrooGood PF establishment")) + "</dd></div>";
-          rows += '<div class="r"><dt>Signature status</dt><dd>' + (hasInk ? "✓ Digitally signed on screen" : "Not signed") + "</dd></div>";
+      } catch (err) {
+        console.error("buildReview error:", err);
+        var revEl = $("#review");
+        if (revEl) {
+          revEl.innerHTML = '<div class="note" style="color:var(--danger); border-left-color:var(--danger);">Unable to generate review summary: ' + esc(err.message) + '</div>';
         }
-
-        html += '<div class="rev"><h3><span>' + group[0] + '</span>' +
-          '<button type="button" class="linkbtn" data-goto="' + group[1] + '">✎ Edit</button></h3><dl>' + rows + "</dl></div>";
-      });
-
-      $("#review").innerHTML = html;
-      $$("#review [data-goto]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          go(parseInt(btn.getAttribute("data-goto"), 10));
-        });
-      });
+      }
     }
 
     function esc(s) {
@@ -2495,7 +2549,7 @@
               parsed = JSON.parse(text);
               if (parsed.reference) payload.reference = parsed.reference;
             } catch (e) { }
-            finish(true, parsed);
+            clearDraft(); finish(true, parsed);
           })
           .catch(function (err) {
             // Google Apps Script redirect may trigger browser CORS on read, but server successfully receives POST.
@@ -2507,7 +2561,7 @@
               body: JSON.stringify(payload)
             })
               .then(function () {
-                finish(true, null);
+                clearDraft(); finish(true, null);
               })
               .catch(function () {
                 finish(false, null);
@@ -2642,7 +2696,153 @@
       alert("Google Sheet Web App URL updated successfully!");
     });
 
-    /* ==========================================================================
+        /* ==========================================================================
+       REAL-TIME DRAFT PERSISTENCE (PREVENTS DATA LOSS ON VIEW-SWITCH OR RELOAD)
+       ========================================================================== */
+    var DRAFT_STORAGE_KEY = "troogood_joining_form_draft_v2";
+
+    function saveDraft() {
+      try {
+        var draft = {
+          values: {},
+          radios: {},
+          checkboxes: {},
+          family: [],
+          photoDataUrl: photoDataUrl || "",
+          aadhaarDataUrl: aadhaarDataUrl || "",
+          signatureImage: hasInk && pad ? pad.toDataURL("image/png") : "",
+          curStep: cur,
+          timestamp: Date.now()
+        };
+
+        // Text inputs, selects, textareas
+        $$("input, select, textarea", form).forEach(function (el) {
+          if (!el.name) return;
+          if (el.type === "radio") {
+            if (el.checked) draft.radios[el.name] = el.value;
+          } else if (el.type === "checkbox") {
+            draft.checkboxes[el.name] = el.checked;
+          } else {
+            draft.values[el.name] = el.value;
+          }
+        });
+
+        // Family rows
+        $$("#famRows .fam").forEach(function (row) {
+          var ins = $$("input", row);
+          if (ins.length >= 3) {
+            draft.family.push({
+              name: ins[0].value,
+              rel: ins[1].value,
+              dob: ins[2].value
+            });
+          }
+        });
+
+        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+      } catch (e) {
+        console.warn("Draft save failed:", e);
+      }
+    }
+
+    function restoreDraft() {
+      try {
+        var raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+        if (!raw) return;
+        var draft = JSON.parse(raw);
+        if (!draft) return;
+
+        // Restore values
+        if (draft.values) {
+          Object.keys(draft.values).forEach(function (name) {
+            if (name === "code") return; // Keep code disabled and empty
+            var el = form.elements[name];
+            if (el && draft.values[name] !== undefined) {
+              el.value = draft.values[name];
+            }
+          });
+        }
+
+        // Restore radios
+        if (draft.radios) {
+          Object.keys(draft.radios).forEach(function (name) {
+            var r = form.querySelector('[name="' + name + '"][value="' + draft.radios[name] + '"]');
+            if (r) {
+              r.checked = true;
+              r.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+          });
+        }
+
+        // Restore checkboxes
+        if (draft.checkboxes) {
+          Object.keys(draft.checkboxes).forEach(function (name) {
+            var c = form.elements[name];
+            if (c) c.checked = draft.checkboxes[name];
+          });
+        }
+
+        // Restore photo
+        if (draft.photoDataUrl) {
+          photoDataUrl = draft.photoDataUrl;
+          if (photoImg) { photoImg.src = photoDataUrl; photoImg.classList.remove("hide"); }
+          if (photoPlaceholder) { photoPlaceholder.classList.add("hide"); }
+          if (removePhotoBtn) { removePhotoBtn.classList.remove("hide"); }
+        }
+
+        // Restore Aadhaar
+        if (draft.aadhaarDataUrl) {
+          aadhaarDataUrl = draft.aadhaarDataUrl;
+          if (aadhaarImg) { aadhaarImg.src = aadhaarDataUrl; aadhaarImg.classList.remove("hide"); }
+          if (aadhaarPlaceholder) { aadhaarPlaceholder.classList.add("hide"); }
+          if (removeAadhaarBtn) { removeAadhaarBtn.classList.remove("hide"); }
+        }
+
+        // Restore family rows
+        if (draft.family && draft.family.length) {
+          var famContainer = $("#famRows");
+          if (famContainer) famContainer.innerHTML = "";
+          famN = 0;
+          draft.family.forEach(function (f) {
+            addFam(f);
+          });
+        }
+
+        // Restore signature
+        if (draft.signatureImage) {
+          var img = new Image();
+          img.onload = function () {
+            sizePad();
+            ctx.drawImage(img, 0, 0, pad.width, pad.height);
+            hasInk = true;
+            var hSig = $('[data-v="sig"]');
+            if (hSig) hSig.classList.remove("bad");
+          };
+          img.src = draft.signatureImage;
+        }
+
+        // Restore step position
+        if (typeof draft.curStep === "number" && draft.curStep > 0 && draft.curStep < steps.length) {
+          go(draft.curStep);
+        }
+      } catch (e) {
+        console.warn("Draft restore failed:", e);
+      }
+    }
+
+    function clearDraft() {
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch (e) {}
+    }
+
+    // Attach listeners for automatic draft persistence
+    form.addEventListener("input", saveDraft);
+    form.addEventListener("change", saveDraft);
+    window.addEventListener("mouseup", saveDraft);
+    window.addEventListener("touchend", saveDraft);
+
+/* ==========================================================================
        URL PREFILL & INITIALIZATION
        ========================================================================== */
     (function () {
@@ -2666,7 +2866,7 @@
         today.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) + ".";
 
       sizePad();
-      go(0);
+      restoreDraft();
     })();
   </script>
 </body>
