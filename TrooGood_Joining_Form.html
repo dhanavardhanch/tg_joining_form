@@ -1181,36 +1181,62 @@
                 <input type="date" name="doj">
                 <p class="err">Enter the date you started work.</p>
               </label>
-              <!-- Unit â€” populated from Lookup sheet col A -->
+              <!-- Unit dropdown with R&D -->
               <label class="f" data-v="req" id="unitWrap"><span class="lab"><b>Unit you work at</b><span
                     class="req">*</span></span>
                 <select name="unit" id="unitSelect">
-                  <option value="">Loading\u2026</option>
+                  <option value="">Select your unit</option>
+                  <option value="TGK-1">TGK-1</option>
+                  <option value="TGK-2">TGK-2</option>
+                  <option value="TGK-3">TGK-3</option>
+                  <option value="TGK-4">TGK-4</option>
+                  <option value="TGK-5">TGK-5</option>
+                  <option value="TGR">TGR</option>
+                  <option value="Corporate">Corporate</option>
+                  <option value="Institutional">Institutional</option>
+                  <option value="Retail Sales">Retail Sales</option>
+                  <option value="R&D">R&D</option>
                 </select>
                 <p class="err">Select the unit you work at.</p>
               </label>
-              </label>
-              <!-- Designation â€” populated from Lookup sheet col B -->
+
+              <!-- Designation dropdown with 19 roles -->
               <div class="f" data-v="req" id="desigWrap"><span class="lab"><b>Your role / Designation</b><span
                     class="req">*</span></span>
-                <select name="desig" id="desigSelect" style="display:none">
+                <select name="desig" id="desigSelect">
                   <option value="">Select your designation</option>
+                  <option value="IT">IT</option>
+                  <option value="HR">HR</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Finance">Finance</option>
+                  <option value="QC">QC</option>
+                  <option value="House Keeping">House Keeping</option>
+                  <option value="Bhatti Operator">Bhatti Operator</option>
+                  <option value="Scavenger">Scavenger</option>
+                  <option value="Helper">Helper</option>
+                  <option value="Security">Security</option>
+                  <option value="Packing Operator">Packing Operator</option>
+                  <option value="Electrician">Electrician</option>
+                  <option value="Technician">Technician</option>
+                  <option value="Driver">Driver</option>
+                  <option value="Shift Incharge">Shift Incharge</option>
+                  <option value="Plant Head">Plant Head</option>
+                  <option value="Retail">Retail</option>
+                  <option value="Institutional">Institutional</option>
+                  <option value="others">others</option>
                 </select>
-                <input type="text" name="desig" id="desigInput"
-                  placeholder="e.g. Helper, Roller, Sales Champ, Executive" style="display:none">
-                <p class="err">Enter your role or designation.</p>
+                <div id="desigOtherWrap" class="hide" style="margin-top:8px;">
+                  <input type="text" name="desig_other" id="desigOtherInput"
+                    placeholder="Specify your role / designation">
+                  <p class="hint">Please specify your designation.</p>
+                </div>
+                <p class="err">Select your role or designation.</p>
               </div>
+
+              <!-- Reporting Manager -->
+              <label class="f"><span class="lab"><b>Who you report to</b></span>
+                <input type="text" name="reporting" id="reportingInput" placeholder="Name of your supervisor / manager">
               </label>
-              <label class="f"><span class="lab"><b>Department or line</b></span>
-                <input type="text" name="dept" placeholder="e.g. Bars line, Chikki line, Stores, Quality"></label>
-              <!-- Reporting Manager â€” populated from Lookup sheet col C -->
-              <div class="f" id="reportingWrap"><span class="lab"><b>Who you report to</b></span>
-                <select name="reporting" id="reportingSelect" style="display:none">
-                  <option value="">Select your manager</option>
-                </select>
-                <input type="text" name="reporting" id="reportingInput" placeholder="Name of your supervisor / manager"
-                  style="display:none">
-              </div>
             </div>
           </fieldset>
           <fieldset>
@@ -1227,16 +1253,12 @@
               <p class="err">Please choose one engagement type.</p>
             </div>
             <div class="grid two" style="margin-top:16px">
-              <!-- Contractor â€” populated from Lookup sheet col D; required when Through contractor selected -->
-              <div class="f hide" id="vendorWrap"><span class="lab"><b>Contractor / Agency name</b><span
+              <!-- Contractor — required when Through contractor selected -->
+              <label class="f hide" id="vendorWrap"><span class="lab"><b>Contractor / Agency name</b><span
                     class="req">*</span></span>
-                <select name="vendor" id="vendorSelect" style="display:none">
-                  <option value="">Select contractor</option>
-                </select>
-                <input type="text" name="vendor" id="vendorInput" placeholder="e.g. Rubicon, Baba, GS Manpower, Max"
-                  style="display:none">
+                <input type="text" name="vendor" id="vendorInput" placeholder="e.g. Rubicon, Baba, GS Manpower, Max">
                 <p class="err">Please enter the contractor / agency name.</p>
-              </div>
+              </label>
               <label class="f"><span class="lab"><b>Shift timing</b></span>
                 <select name="shift">
                   <option value="">Select shift</option>
@@ -1315,8 +1337,6 @@
               <div class="choice-set" role="radiogroup" aria-label="Gender">
                 <label class="choice"><input type="radio" name="gender" value="Male"><span>Male</span></label>
                 <label class="choice"><input type="radio" name="gender" value="Female"><span>Female</span></label>
-                <label class="choice"><input type="radio" name="gender"
-                    value="Transgender"><span>Transgender</span></label>
               </div>
               <p class="err">Please select your gender.</p>
             </div>
@@ -1815,7 +1835,7 @@
     /* ==========================================================================
        HR CONFIGURATION (Can also be set dynamically via Settings modal)
        ========================================================exec================== */
-    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzKbN3TeADiYP-fPQHt8Xs06lsHrCBxFoUV2hbnMefNUrU_HOpB7Idt1-MU-9zEtAaehA/exec";// Paste your deployed Google Apps Script /exec URL here
+    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbyBEkDZZxHQqpKbHKhicmVrWML6hqwo5Ifns24-Hawu6kgEMWpUMOpdjjtx13qndyvAuQ/exec";// Paste your deployed Google Apps Script /exec URL here
     var HR_WHATSAPP = "";                // e.g. "919876543210" for WhatsApp follow-up
     var HR_EMAIL = "storage@troogood.com";  // Fallback HR notification contact
 
@@ -1921,7 +1941,7 @@
        VALIDATION LOGIC (Strictly preserving original rule definitions)
        ========================================================================== */
     var textTitleFields = [
-      "name", "father", "desig", "dept", "reporting", "vendor",
+      "name", "father", "desig", "reporting", "vendor",
       "languages", "addr_present", "addr_permanent", "emg_name", "emg_rel",
       "bank", "prev_employer", "prev_estb", "nom_name", "nom_rel", "sig_name", "sig_place"
     ];
@@ -1985,7 +2005,7 @@
         } else if (input) {
           var fn = RULES[kind] || RULES.req;
           ok = fn(input.value);
-          if (ok && typeof textTitleFields !== "undefined" && textTitleFields.indexOf(input.name) > -1 && input.value.trim().length > 0) {
+          if (ok && input.tagName !== "SELECT" && typeof textTitleFields !== "undefined" && (textTitleFields.indexOf(input.name) > -1 || input.name === "desig_other") && input.value.trim().length > 0) {
             var words = input.value.trim().split(/\s+/);
             var allCaps = words.every(function (w) { return /^[A-Z0-9]/.test(w); });
             if (!allCaps) {
@@ -2062,6 +2082,21 @@
         $("#vendorWrap").classList.toggle("hide", !isVendor);
         var vw = $("#vendorWrap");
         if (isVendor) { vw.setAttribute("data-v", "req"); } else { vw.removeAttribute("data-v"); }
+      }
+      if (n === "desig") {
+        var isOther = (form.elements["desig"].value || "").toLowerCase() === "others";
+        var dow = $("#desigOtherWrap");
+        if (dow) {
+          dow.classList.toggle("hide", !isOther);
+          if (isOther) {
+            dow.setAttribute("data-v", "req");
+          } else {
+            dow.removeAttribute("data-v");
+            dow.classList.remove("bad");
+            var inpOther = $("#desigOtherInput");
+            if (inpOther) inpOther.value = "";
+          }
+        }
       }
       if (n === "health_ins") {
         $("#healthInsWrap").classList.toggle("hide", radio("health_ins") !== "Yes");
@@ -2403,7 +2438,7 @@
        REVIEW & SUMMARY BUILDER
        ========================================================================== */
     var LABELS = {
-      code: "Employee code", doj: "Date of joining", unit: "Unit", desig: "Role / Designation", dept: "Department or line",
+      code: "Employee code", doj: "Date of joining", unit: "Unit", desig: "Role / Designation",
       reporting: "Reports to", engagement: "Engagement", vendor: "Contractor", shift: "Shift timing",
       name: "Full name", father: "Father's / Husband's name", dob: "Date of birth", gender: "Gender",
       marital: "Marital status", mobile: "Mobile number", altmobile: "Alternate number", email: "Email",
@@ -2412,16 +2447,17 @@
       aadhaar: "Aadhaar number", pan: "PAN number", bank: "Bank and branch", account: "Account number", ifsc: "IFSC", docs: "Documents sent",
       worked: "Worked before", prev_employer: "Previous employer", prev_last_day: "Last working day",
       epf: "Had PF account before", eps: "Was in EPS 1995", uan: "UAN", pf_account: "Old PF account",
-      prev_estb: "Earlier establishment", ppo: "Scheme certificate / PPO", esic: "ESIC number", intl: "International worker",
+      prev_estb: "Earlier establishment", ppo: "Scheme certificate / PPO", esic: "ESIC number",
+      health_ins: "Health Insurance", health_ins_no: "Health Insurance Number", intl: "International worker",
       nom_name: "Nominee", nom_rel: "Nominee relationship", nom_dob: "Nominee date of birth",
       sig_name: "Signed by", sig_place: "Place"
     };
 
     var GROUPS = [
-      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "dept", "reporting", "engagement", "vendor", "shift"]],
+      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "reporting", "engagement", "vendor", "shift"]],
       ["Personal & Contact", 1, ["name", "father", "dob", "gender", "marital", "mobile", "altmobile", "email", "languages", "blood", "addr_present", "addr_permanent", "emg_name", "emg_rel", "emg_mobile"]],
       ["Bank & Identification", 2, ["aadhaar", "pan", "bank", "account", "ifsc", "docs"]],
-      ["Provident Fund & Social Security", 3, ["worked", "prev_employer", "prev_last_day", "epf", "eps", "uan", "pf_account", "prev_estb", "ppo", "esic", "intl"]],
+      ["Provident Fund & Social Security", 3, ["worked", "prev_employer", "prev_last_day", "epf", "eps", "uan", "pf_account", "prev_estb", "ppo", "esic", "health_ins", "health_ins_no", "intl"]],
       ["Nominee & Family Members", 4, ["nom_name", "nom_rel", "nom_dob"]],
       ["Declarations & Signature", 5, ["sig_name", "sig_place"]]
     ];
@@ -2437,6 +2473,19 @@
           out[k] = val(k);
         }
       });
+
+      // Special handling for designation if "others" chosen
+      if (out.desig && out.desig.toLowerCase() === "others") {
+        var otherVal = val("desig_other");
+        out.desig = otherVal ? otherVal : "others";
+      }
+
+      // Special handling for Health Insurance: if not Yes, ensure NA
+      if (out.health_ins === "Yes") {
+        out.health_ins_no = val("health_ins_no") || "NA";
+      } else {
+        out.health_ins_no = "NA";
+      }
 
       out.family = [];
       $$("#famRows .fam").forEach(function (row) {
@@ -2811,6 +2860,9 @@
             var el = form.elements[name];
             if (el && draft.values[name] !== undefined) {
               el.value = draft.values[name];
+              if (el.tagName === "SELECT") {
+                el.dispatchEvent(new Event("change", { bubbles: true }));
+              }
             }
           });
         }
@@ -2919,73 +2971,7 @@
 
       sizePad();
 
-      /* ===================================================================
-         LOOKUP DATA — fetched privately via Apps Script (?action=lookup)
-         The Google Sheet stays private; no public sharing needed.
-         Apps Script runs as the owner and reads the Lookup tab.
-         =================================================================== */
-
-      function populateDynField(selEl, inpEl, values, ph) {
-        if (!selEl || !inpEl) return;
-        var clean = (values || []).filter(function (v) { return v && v.trim(); });
-        if (clean.length === 0) {
-          inpEl.style.display = ""; selEl.style.display = "none";
-          selEl.disabled = true; inpEl.disabled = false;
-        } else {
-          selEl.innerHTML = '<option value="">' + ph + '</option>';
-          clean.forEach(function (v) {
-            var o = document.createElement("option");
-            o.value = v.trim(); o.textContent = v.trim();
-            selEl.appendChild(o);
-          });
-          selEl.style.display = ""; selEl.disabled = false;
-          inpEl.style.display = "none"; inpEl.disabled = true; inpEl.value = "";
-        }
-      }
-
-      function applyLookup(d) {
-        var uSel = document.getElementById("unitSelect");
-        if (uSel && d.units && d.units.length > 0) {
-          uSel.innerHTML = '<option value="">Select your unit</option>';
-          d.units.forEach(function (v) {
-            var o = document.createElement("option"); o.value = v; o.textContent = v;
-            uSel.appendChild(o);
-          });
-          uSel.style.display = "";
-        } else if (uSel && uSel.tagName === "SELECT") {
-          var inp = document.createElement("input");
-          inp.type = "text"; inp.name = "unit"; inp.id = "unitSelect";
-          inp.placeholder = "Enter your unit";
-          if (uSel.parentNode) uSel.parentNode.replaceChild(inp, uSel);
-        }
-        populateDynField(document.getElementById("desigSelect"), document.getElementById("desigInput"), d.designations || [], "Select your designation");
-        populateDynField(document.getElementById("reportingSelect"), document.getElementById("reportingInput"), d.managers || [], "Select your manager");
-        populateDynField(document.getElementById("vendorSelect"), document.getElementById("vendorInput"), d.contractors || [], "Select contractor");
-        restoreDraft();
-      }
-
-      function loadLookupData() {
-        var scriptUrl = (SUBMIT_URL || localStorage.getItem("troogood_submit_url") || "").trim();
-        if (!scriptUrl) {
-          applyLookup({ units: [], designations: [], managers: [], contractors: [] });
-          return;
-        }
-        var lookupUrl = scriptUrl + "?action=lookup";
-        fetch(lookupUrl)
-          .then(function (r) { return r.ok ? r.json() : {}; })
-          .catch(function () { return {}; })
-          .then(function (data) {
-            if (data && data.ok) {
-              applyLookup(data);
-            } else {
-              applyLookup({ units: [], designations: [], managers: [], contractors: [] });
-            }
-          });
-      }
-
-      restoreDraft();      // immediate restore with current fields
-      loadLookupData();    // enrich with live sheet dropdowns
-      setInterval(loadLookupData, 5 * 60 * 1000); // refresh every 5 min
+      restoreDraft();
     })();
   </script>
 </body>

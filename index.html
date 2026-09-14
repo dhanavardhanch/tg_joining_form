@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--
   TrooGood / Mformillet Foods Pvt Ltd — Employee Onboarding & Joining Portal
   ==========================================================================
@@ -1181,30 +1181,62 @@
                 <input type="date" name="doj">
                 <p class="err">Enter the date you started work.</p>
               </label>
-              <label class="f" data-v="req"><span class="lab"><b>Unit you work at</b><span class="req">*</span></span>
-                <select name="unit">
+              <!-- Unit dropdown with R&D -->
+              <label class="f" data-v="req" id="unitWrap"><span class="lab"><b>Unit you work at</b><span
+                    class="req">*</span></span>
+                <select name="unit" id="unitSelect">
                   <option value="">Select your unit</option>
-                  <option>TGK-1</option>
-                  <option>TGK-2</option>
-                  <option>TGK-3</option>
-                  <option>TGK-4</option>
-                  <option>TGK-5</option>
-                  <option>TGR</option>
-                  <option>Corporate</option>
-                  <option>Institutional</option>
-                  <option>Retail Sales</option>
+                  <option value="TGK-1">TGK-1</option>
+                  <option value="TGK-2">TGK-2</option>
+                  <option value="TGK-3">TGK-3</option>
+                  <option value="TGK-4">TGK-4</option>
+                  <option value="TGK-5">TGK-5</option>
+                  <option value="TGR">TGR</option>
+                  <option value="Corporate">Corporate</option>
+                  <option value="Institutional">Institutional</option>
+                  <option value="Retail Sales">Retail Sales</option>
+                  <option value="R&D">R&D</option>
                 </select>
                 <p class="err">Select the unit you work at.</p>
               </label>
-              <label class="f" data-v="req"><span class="lab"><b>Your role / Designation</b><span
+
+              <!-- Designation dropdown with 19 roles -->
+              <div class="f" data-v="req" id="desigWrap"><span class="lab"><b>Your role / Designation</b><span
                     class="req">*</span></span>
-                <input type="text" name="desig" placeholder="e.g. Helper, Roller, Sales Champ, Executive">
-                <p class="err">Enter your role or designation.</p>
-              </label>
-              <label class="f"><span class="lab"><b>Department or line</b></span>
-                <input type="text" name="dept" placeholder="e.g. Bars line, Chikki line, Stores, Quality"></label>
+                <select name="desig" id="desigSelect">
+                  <option value="">Select your designation</option>
+                  <option value="IT">IT</option>
+                  <option value="HR">HR</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Finance">Finance</option>
+                  <option value="QC">QC</option>
+                  <option value="House Keeping">House Keeping</option>
+                  <option value="Bhatti Operator">Bhatti Operator</option>
+                  <option value="Scavenger">Scavenger</option>
+                  <option value="Helper">Helper</option>
+                  <option value="Security">Security</option>
+                  <option value="Packing Operator">Packing Operator</option>
+                  <option value="Electrician">Electrician</option>
+                  <option value="Technician">Technician</option>
+                  <option value="Driver">Driver</option>
+                  <option value="Shift Incharge">Shift Incharge</option>
+                  <option value="Plant Head">Plant Head</option>
+                  <option value="Retail">Retail</option>
+                  <option value="Institutional">Institutional</option>
+                  <option value="others">others</option>
+                </select>
+                <div id="desigOtherWrap" class="hide" style="margin-top:8px;">
+                  <input type="text" name="desig_other" id="desigOtherInput"
+                    placeholder="Specify your role / designation">
+                  <p class="hint">Please specify your designation.</p>
+                </div>
+                <p class="err">Select your role or designation.</p>
+              </div>
+
+              <!-- Reporting Manager -->
               <label class="f"><span class="lab"><b>Who you report to</b></span>
-                <input type="text" name="reporting" placeholder="Name of your supervisor / manager"></label>
+                <input type="text" name="reporting" id="reportingInput" placeholder="Name of your supervisor / manager">
+              </label>
             </div>
           </fieldset>
           <fieldset>
@@ -1221,8 +1253,12 @@
               <p class="err">Please choose one engagement type.</p>
             </div>
             <div class="grid two" style="margin-top:16px">
-              <label class="f hide" id="vendorWrap"><span class="lab"><b>Contractor / Agency name</b></span>
-                <input type="text" name="vendor" placeholder="e.g. Rubicon, Baba, GS Manpower, Max"></label>
+              <!-- Contractor — required when Through contractor selected -->
+              <label class="f hide" id="vendorWrap"><span class="lab"><b>Contractor / Agency name</b><span
+                    class="req">*</span></span>
+                <input type="text" name="vendor" id="vendorInput" placeholder="e.g. Rubicon, Baba, GS Manpower, Max">
+                <p class="err">Please enter the contractor / agency name.</p>
+              </label>
               <label class="f"><span class="lab"><b>Shift timing</b></span>
                 <select name="shift">
                   <option value="">Select shift</option>
@@ -1250,23 +1286,29 @@
               <div class="photo-preview-box" id="photoPreviewBox">
                 <div class="photo-placeholder" id="photoPlaceholder">
                   <span style="font-size:28px;">📷</span>
-                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:4px;">Passport Photo</span>
+                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:4px;">Passport
+                    Photo</span>
                 </div>
                 <img id="photoImg" class="hide" alt="Uploaded photograph" />
               </div>
               <div class="photo-actions">
                 <div style="display:flex; gap:10px; flex-wrap:wrap; width:100%;">
-                  <label class="btn primary" style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                  <label class="btn primary"
+                    style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
                     📸 Take Selfie (Camera)
                     <input type="file" id="photoCameraInput" accept="image/*" capture="user" style="display:none;" />
                   </label>
-                  <label class="btn ghost" style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                  <label class="btn ghost"
+                    style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
                     📁 Choose Gallery Photo
                     <input type="file" id="photoGalleryInput" accept="image/*" style="display:none;" />
                   </label>
                 </div>
-                <button type="button" class="linkbtn hide" id="removePhotoBtn" style="color:var(--danger); font-size:13px; font-weight:600; padding:4px 0;">✕ Remove Photo</button>
-                <p class="hint" style="margin-top:4px;">Tap <b>Take Selfie</b> to open your mobile camera directly, or <b>Choose Gallery Photo</b> to upload an existing picture.</p>
+                <button type="button" class="linkbtn hide" id="removePhotoBtn"
+                  style="color:var(--danger); font-size:13px; font-weight:600; padding:4px 0;">✕ Remove Photo</button>
+                <p class="hint" style="margin-top:4px;">Tap <b>Take Selfie</b> to open your mobile camera directly, or
+                  <b>Choose Gallery Photo</b> to upload an existing picture.
+                </p>
               </div>
             </div>
           </fieldset>
@@ -1295,8 +1337,6 @@
               <div class="choice-set" role="radiogroup" aria-label="Gender">
                 <label class="choice"><input type="radio" name="gender" value="Male"><span>Male</span></label>
                 <label class="choice"><input type="radio" name="gender" value="Female"><span>Female</span></label>
-                <label class="choice"><input type="radio" name="gender"
-                    value="Transgender"><span>Transgender</span></label>
               </div>
               <p class="err">Please select your gender.</p>
             </div>
@@ -1392,29 +1432,37 @@
             <p>Your monthly salary will be credited into this account. Please verify with your bank passbook or
               cancelled cheque.</p>
           </div>
-                    <fieldset>
+          <fieldset>
             <legend>Aadhaar Card Document / Front Photo</legend>
             <div class="photo-upload-wrap">
               <div class="photo-preview-box" id="aadhaarPreviewBox" style="width:130px; height:85px; flex:0 0 130px;">
                 <div class="photo-placeholder" id="aadhaarPlaceholder">
                   <span style="font-size:24px;">🪪</span>
-                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:2px;">Aadhaar Front</span>
+                  <span style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:2px;">Aadhaar
+                    Front</span>
                 </div>
-                <img id="aadhaarImg" class="hide" alt="Uploaded Aadhaar card" style="width:100%; height:100%; object-fit:contain; background:#ffffff;" />
+                <img id="aadhaarImg" class="hide" alt="Uploaded Aadhaar card"
+                  style="width:100%; height:100%; object-fit:contain; background:#ffffff;" />
               </div>
               <div class="photo-actions">
                 <div style="display:flex; gap:10px; flex-wrap:wrap; width:100%;">
-                  <label class="btn primary" style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                  <label class="btn primary"
+                    style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
                     📸 Scan Card (Camera)
-                    <input type="file" id="aadhaarCameraInput" accept="image/*" capture="environment" style="display:none;" />
+                    <input type="file" id="aadhaarCameraInput" accept="image/*" capture="environment"
+                      style="display:none;" />
                   </label>
-                  <label class="btn ghost" style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                  <label class="btn ghost"
+                    style="cursor:pointer; font-size:13px; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
                     📁 Upload Aadhaar Image
                     <input type="file" id="aadhaarGalleryInput" accept="image/*" style="display:none;" />
                   </label>
                 </div>
-                <button type="button" class="linkbtn hide" id="removeAadhaarBtn" style="color:var(--danger); font-size:12.5px; font-weight:600; padding:4px 0;">✕ Remove Aadhaar Photo</button>
-                <p class="hint" style="margin-top:4px;">Tap <b>Scan Card</b> to take a clear camera photo of your Aadhaar front, or <b>Upload Aadhaar Image</b> from gallery.</p>
+                <button type="button" class="linkbtn hide" id="removeAadhaarBtn"
+                  style="color:var(--danger); font-size:12.5px; font-weight:600; padding:4px 0;">✕ Remove Aadhaar
+                  Photo</button>
+                <p class="hint" style="margin-top:4px;">Tap <b>Scan Card</b> to take a clear camera photo of your
+                  Aadhaar front, or <b>Upload Aadhaar Image</b> from gallery.</p>
               </div>
             </div>
           </fieldset>
@@ -1548,6 +1596,24 @@
             <div class="grid two">
               <label class="f"><span class="lab"><b>ESIC insurance number (IP number)</b></span>
                 <input type="text" name="esic" class="mono" placeholder="Leave blank if newly enrolling"></label>
+
+              <!-- Health Insurance -->
+              <div class="f" data-v="req" data-name="health_ins">
+                <span class="lab"><b>Do you have Health Insurance?</b><span class="req">*</span></span>
+                <div class="choice-set" role="radiogroup" aria-label="Health Insurance">
+                  <label class="choice"><input type="radio" name="health_ins" value="No"><span>No</span></label>
+                  <label class="choice"><input type="radio" name="health_ins" value="Yes"><span>Yes</span></label>
+                </div>
+                <p class="err">Please select an option.</p>
+              </div>
+              <div id="healthInsWrap" class="hide" style="grid-column:1/-1">
+                <label class="f" data-v="req"><span class="lab"><b>Health Insurance Number</b><span
+                      class="req">*</span></span>
+                  <input type="text" name="health_ins_no" class="mono"
+                    placeholder="Enter your health insurance policy number">
+                  <p class="err">Please enter your health insurance number.</p>
+                </label>
+              </div>
               <label class="f"><span class="lab"><b>Are you an international / foreign worker?</b></span>
                 <select name="intl">
                   <option>No</option>
@@ -1768,10 +1834,10 @@
 
     /* ==========================================================================
        HR CONFIGURATION (Can also be set dynamically via Settings modal)
-       ========================================================================== */
-    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzfTFjPMidGnxzRzXnxb7wfafxfIBA3no0Ne2pBZy-Lrm4_G4gfmVWMYK6PnvLItNeVCw/exec";// Paste your deployed Google Apps Script /exec URL here
+       ========================================================exec================== */
+    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbyBEkDZZxHQqpKbHKhicmVrWML6hqwo5Ifns24-Hawu6kgEMWpUMOpdjjtx13qndyvAuQ/exec";// Paste your deployed Google Apps Script /exec URL here
     var HR_WHATSAPP = "";                // e.g. "919876543210" for WhatsApp follow-up
-    var HR_EMAIL = "dhanavardhanchennuru@gmail.com";  // Fallback HR notification contact
+    var HR_EMAIL = "storage@troogood.com";  // Fallback HR notification contact
 
     /* ==========================================================================
        DOM & FORM STATE
@@ -1875,7 +1941,7 @@
        VALIDATION LOGIC (Strictly preserving original rule definitions)
        ========================================================================== */
     var textTitleFields = [
-      "name", "father", "desig", "dept", "reporting", "vendor",
+      "name", "father", "desig", "reporting", "vendor",
       "languages", "addr_present", "addr_permanent", "emg_name", "emg_rel",
       "bank", "prev_employer", "prev_estb", "nom_name", "nom_rel", "sig_name", "sig_place"
     ];
@@ -1939,7 +2005,7 @@
         } else if (input) {
           var fn = RULES[kind] || RULES.req;
           ok = fn(input.value);
-          if (ok && typeof textTitleFields !== "undefined" && textTitleFields.indexOf(input.name) > -1 && input.value.trim().length > 0) {
+          if (ok && input.tagName !== "SELECT" && typeof textTitleFields !== "undefined" && (textTitleFields.indexOf(input.name) > -1 || input.name === "desig_other") && input.value.trim().length > 0) {
             var words = input.value.trim().split(/\s+/);
             var allCaps = words.every(function (w) { return /^[A-Z0-9]/.test(w); });
             if (!allCaps) {
@@ -2012,7 +2078,28 @@
     form.addEventListener("change", function (e) {
       var n = e.target.name;
       if (n === "engagement") {
-        $("#vendorWrap").classList.toggle("hide", radio("engagement") !== "Vendor / contractor");
+        var isVendor = radio("engagement") === "Vendor / contractor";
+        $("#vendorWrap").classList.toggle("hide", !isVendor);
+        var vw = $("#vendorWrap");
+        if (isVendor) { vw.setAttribute("data-v", "req"); } else { vw.removeAttribute("data-v"); }
+      }
+      if (n === "desig") {
+        var isOther = (form.elements["desig"].value || "").toLowerCase() === "others";
+        var dow = $("#desigOtherWrap");
+        if (dow) {
+          dow.classList.toggle("hide", !isOther);
+          if (isOther) {
+            dow.setAttribute("data-v", "req");
+          } else {
+            dow.removeAttribute("data-v");
+            dow.classList.remove("bad");
+            var inpOther = $("#desigOtherInput");
+            if (inpOther) inpOther.value = "";
+          }
+        }
+      }
+      if (n === "health_ins") {
+        $("#healthInsWrap").classList.toggle("hide", radio("health_ins") !== "Yes");
       }
       if (n === "worked") {
         $("#prevWrap").classList.toggle("hide", radio("worked") !== "Yes");
@@ -2351,7 +2438,7 @@
        REVIEW & SUMMARY BUILDER
        ========================================================================== */
     var LABELS = {
-      code: "Employee code", doj: "Date of joining", unit: "Unit", desig: "Role / Designation", dept: "Department or line",
+      code: "Employee code", doj: "Date of joining", unit: "Unit", desig: "Role / Designation",
       reporting: "Reports to", engagement: "Engagement", vendor: "Contractor", shift: "Shift timing",
       name: "Full name", father: "Father's / Husband's name", dob: "Date of birth", gender: "Gender",
       marital: "Marital status", mobile: "Mobile number", altmobile: "Alternate number", email: "Email",
@@ -2360,16 +2447,17 @@
       aadhaar: "Aadhaar number", pan: "PAN number", bank: "Bank and branch", account: "Account number", ifsc: "IFSC", docs: "Documents sent",
       worked: "Worked before", prev_employer: "Previous employer", prev_last_day: "Last working day",
       epf: "Had PF account before", eps: "Was in EPS 1995", uan: "UAN", pf_account: "Old PF account",
-      prev_estb: "Earlier establishment", ppo: "Scheme certificate / PPO", esic: "ESIC number", intl: "International worker",
+      prev_estb: "Earlier establishment", ppo: "Scheme certificate / PPO", esic: "ESIC number",
+      health_ins: "Health Insurance", health_ins_no: "Health Insurance Number", intl: "International worker",
       nom_name: "Nominee", nom_rel: "Nominee relationship", nom_dob: "Nominee date of birth",
       sig_name: "Signed by", sig_place: "Place"
     };
 
     var GROUPS = [
-      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "dept", "reporting", "engagement", "vendor", "shift"]],
+      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "reporting", "engagement", "vendor", "shift"]],
       ["Personal & Contact", 1, ["name", "father", "dob", "gender", "marital", "mobile", "altmobile", "email", "languages", "blood", "addr_present", "addr_permanent", "emg_name", "emg_rel", "emg_mobile"]],
       ["Bank & Identification", 2, ["aadhaar", "pan", "bank", "account", "ifsc", "docs"]],
-      ["Provident Fund & Social Security", 3, ["worked", "prev_employer", "prev_last_day", "epf", "eps", "uan", "pf_account", "prev_estb", "ppo", "esic", "intl"]],
+      ["Provident Fund & Social Security", 3, ["worked", "prev_employer", "prev_last_day", "epf", "eps", "uan", "pf_account", "prev_estb", "ppo", "esic", "health_ins", "health_ins_no", "intl"]],
       ["Nominee & Family Members", 4, ["nom_name", "nom_rel", "nom_dob"]],
       ["Declarations & Signature", 5, ["sig_name", "sig_place"]]
     ];
@@ -2385,6 +2473,19 @@
           out[k] = val(k);
         }
       });
+
+      // Special handling for designation if "others" chosen
+      if (out.desig && out.desig.toLowerCase() === "others") {
+        var otherVal = val("desig_other");
+        out.desig = otherVal ? otherVal : "others";
+      }
+
+      // Special handling for Health Insurance: if not Yes, ensure NA
+      if (out.health_ins === "Yes") {
+        out.health_ins_no = val("health_ins_no") || "NA";
+      } else {
+        out.health_ins_no = "NA";
+      }
 
       out.family = [];
       $$("#famRows .fam").forEach(function (row) {
@@ -2472,7 +2573,7 @@
             if (hasInk && pad) {
               try {
                 rows += '<div class="r"><dt>Signature Preview</dt><dd><img src="' + pad.toDataURL("image/png") + '" style="max-width:180px; max-height:60px; border-bottom:1.5px solid #0f172a;" alt="Signature" /></dd></div>';
-              } catch(sigErr){}
+              } catch (sigErr) { }
             }
           }
 
@@ -2696,9 +2797,9 @@
       alert("Google Sheet Web App URL updated successfully!");
     });
 
-        /* ==========================================================================
-       REAL-TIME DRAFT PERSISTENCE (PREVENTS DATA LOSS ON VIEW-SWITCH OR RELOAD)
-       ========================================================================== */
+    /* ==========================================================================
+   REAL-TIME DRAFT PERSISTENCE (PREVENTS DATA LOSS ON VIEW-SWITCH OR RELOAD)
+   ========================================================================== */
     var DRAFT_STORAGE_KEY = "troogood_joining_form_draft_v2";
 
     function saveDraft() {
@@ -2759,6 +2860,9 @@
             var el = form.elements[name];
             if (el && draft.values[name] !== undefined) {
               el.value = draft.values[name];
+              if (el.tagName === "SELECT") {
+                el.dispatchEvent(new Event("change", { bubbles: true }));
+              }
             }
           });
         }
@@ -2833,7 +2937,7 @@
     function clearDraft() {
       try {
         localStorage.removeItem(DRAFT_STORAGE_KEY);
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // Attach listeners for automatic draft persistence
@@ -2842,9 +2946,9 @@
     window.addEventListener("mouseup", saveDraft);
     window.addEventListener("touchend", saveDraft);
 
-/* ==========================================================================
-       URL PREFILL & INITIALIZATION
-       ========================================================================== */
+    /* ==========================================================================
+           URL PREFILL & INITIALIZATION
+           ========================================================================== */
     (function () {
       var q = new URLSearchParams(window.location.search);
       ["code", "name", "unit", "desig", "doj", "reporting", "shift", "vendor"].forEach(function (k) {
@@ -2866,6 +2970,7 @@
         today.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) + ".";
 
       sizePad();
+
       restoreDraft();
     })();
   </script>
