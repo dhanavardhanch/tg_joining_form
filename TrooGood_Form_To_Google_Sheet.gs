@@ -339,19 +339,27 @@ function logToSheet(data, folderUrl, pdfUrl, photoUrl, aadhaarUrl) {
     .setBackground('#00B5E8')
     .setFontColor('#ffffff');
 
+  // Helper to preserve leading zeros in numeric string fields (Aadhaar, Account, Mobile, ESIC)
+  function textCell(val) {
+    if (val === null || val === undefined) return '';
+    var str = val.toString().trim();
+    if (!str) return '';
+    return str.indexOf("'") === 0 ? str : "'" + str;
+  }
+
   var newRow = [
     new Date(),
     data.reference || '',
     data.name || '',
     data.dob || '',
-    data.aadhaar || '',
+    textCell(data.aadhaar),
     data.pan || '',
-    data.account || '',
+    textCell(data.account),
     data.ifsc || '',
-    data.esic || 'N/A',
+    textCell(data.esic || 'N/A'),
     data.unit || '',
     data.desig || '',
-    data.mobile || '',
+    textCell(data.mobile),
     data.doj || '',
     data.shift || 'General Shift',
     data.engagement || 'On TrooGood Rolls',
