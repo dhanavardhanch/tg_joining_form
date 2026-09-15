@@ -310,26 +310,29 @@ function logToSheet(data, folderUrl, pdfUrl, photoUrl, aadhaarUrl) {
   var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
   
   var headers = [
-    'Timestamp',
-    'Reference ID',
-    'Candidate Name',
-    'Date of Birth',
-    'Aadhaar Number',
-    'PAN Number',
-    'Bank Account Number',
-    'Bank IFSC Code',
-    'ESIC Number',
-    'Unit',
-    'Role / Designation',
-    'Mobile Number',
-    'Date of Joining',
-    'Shift Timing',
-    'Employee Type',
-    'Contractor Name',
-    'Drive Subfolder Link',
-    'PDF Application Link',
-    'Passport Photo Link',
-    'Aadhaar Card Link'
+    'Timestamp',               // A (1)
+    'Reference ID',            // B (2)
+    'Employee Code',           // C (3)
+    'Name',                    // D (4)
+    'Unit',                    // E (5)
+    'Designation',             // F (6)
+    'Mobile Number',           // G (7)
+    'Date of Joining',         // H (8)
+    'Aadhaar Number',          // I (9)
+    'PAN Number',              // J (10)
+    'UAN Number',              // K (11)
+    'ESI Number',              // L (12)
+    'Health Insurance Number', // M (13)
+    'Account Number',          // N (14)
+    'IFSC Code',               // O (15)
+    'Drive Folder Link',       // P (16)
+    'PDF Application Link',    // Q (17)
+    'Passport Photo Link',     // R (18)
+    'Aadhaar Card Link',       // S (19)
+    'Date of Birth',           // T (20)
+    'Shift Timing',            // U (21)
+    'Employee Type',           // V (22)
+    'Contractor Name'          // W (23)
   ];
 
   // Automatically update Row 1 headers without touching or deleting any existing candidate data
@@ -350,24 +353,27 @@ function logToSheet(data, folderUrl, pdfUrl, photoUrl, aadhaarUrl) {
   var newRow = [
     new Date(),
     data.reference || '',
+    data.code || '',
     data.name || '',
-    data.dob || '',
-    textCell(data.aadhaar),
-    data.pan || '',
-    textCell(data.account),
-    data.ifsc || '',
-    textCell(data.esic || 'N/A'),
     data.unit || '',
     data.desig || '',
     textCell(data.mobile),
     data.doj || '',
-    data.shift || 'General Shift',
-    data.engagement || 'On TrooGood Rolls',
-    data.vendor || 'N/A',
+    textCell(data.aadhaar),
+    data.pan || '',
+    data.uan || 'N/A',
+    textCell(data.esic || 'N/A'),
+    data.health_ins_no || 'N/A',
+    textCell(data.account),
+    data.ifsc || '',
     folderUrl || '',
     pdfUrl || '',
     photoUrl || '',
-    aadhaarUrl || ''
+    aadhaarUrl || '',
+    data.dob || '',
+    data.shift || 'General Shift',
+    data.engagement || 'On TrooGood Rolls',
+    data.vendor || 'N/A'
   ];
 
   var lastRow = sheet.getLastRow();
@@ -383,9 +389,9 @@ function logToSheet(data, folderUrl, pdfUrl, photoUrl, aadhaarUrl) {
     for (var i = 0; i < dataRange.length; i++) {
       var row = dataRange[i];
       var rowRef = (row[1] || '').toString().trim();
-      var rowName = (row[2] || '').toString().trim().toLowerCase();
-      var rowAadhaar = (row[4] || '').toString().replace(/\s+/g, '');
-      var rowMobile = (row[11] || '').toString().trim();
+      var rowName = (row[3] || '').toString().trim().toLowerCase();
+      var rowAadhaar = (row[8] || '').toString().replace(/\s+/g, '');
+      var rowMobile = (row[6] || '').toString().trim();
 
       var matchAadhaar = (cleanAadhaar.length >= 10 && cleanAadhaar === rowAadhaar);
       var matchRef = (cleanRef.length > 0 && cleanRef === rowRef);
