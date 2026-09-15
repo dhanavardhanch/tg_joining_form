@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TrooGood Employee Onboarding → Google Drive PDF & Subfolder Saver
  * ================================================================
  * Saves every onboarding form submission directly into your designated Google Drive folder:
@@ -34,13 +34,27 @@ function doPost(e) {
       parentFolder = folders.hasNext() ? folders.next() : DriveApp.createFolder("TrooGood Employee Onboarding Documents");
     }
 
-    // 2. Create an individual subfolder with employee's name
+    // 2. Locate existing subfolder or create new subfolder for employee
     var empName = (data.name || 'New Employee').trim();
-    var folderTitle = empName + (data.code ? ' (' + data.code + ')' : '') + ' - ' + (data.reference || '');
-    var subFolder = parentFolder.createFolder(folderTitle);
-    try {
-      subFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    } catch(e) {}
+    var refId = (data.reference || '').trim();
+    var folderTitle = empName + (data.code ? ' (' + data.code + ')' : '') + (refId ? ' - ' + refId : '');
+    
+    var subFolder = null;
+    var existingFolders = parentFolder.getFolders();
+    while (existingFolders.hasNext()) {
+      var f = existingFolders.next();
+      var fName = f.getName();
+      if ((refId && fName.indexOf(refId) > -1) || (empName && fName.toLowerCase().indexOf(empName.toLowerCase()) > -1)) {
+        subFolder = f;
+        break;
+      }
+    }
+    if (!subFolder) {
+      subFolder = parentFolder.createFolder(folderTitle);
+      try {
+        subFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch(e) {}
+    }
 
     // 3. Save uploaded photograph into the subfolder
     var photoUrl = '';
@@ -197,10 +211,9 @@ function createEmployeePdf(data, subFolder, empName) {
         '<tr><td class="lbl">Date of Joining</td><td>' + esc(data.doj || '') + '</td></tr>' +
         '<tr><td class="lbl">Unit / Location</td><td>' + esc(data.unit || '') + '</td></tr>' +
         '<tr><td class="lbl">Role / Designation</td><td>' + esc(data.desig || '') + '</td></tr>' +
-        '<tr><td class="lbl">Department / Line</td><td>' + esc(data.dept || '') + '</td></tr>' +
         '<tr><td class="lbl">Reporting Supervisor</td><td>' + esc(data.reporting || '') + '</td></tr>' +
-        '<tr><td class="lbl">Engagement Type</td><td>' + esc(data.engagement || '') + (data.vendor ? ' (Vendor: ' + esc(data.vendor) + ')' : '') + '</td></tr>' +
-        '<tr><td class="lbl">Shift Timing</td><td>' + esc(data.shift || 'General shift') + '</td></tr>' +
+        '<tr><td class="lbl">Shift Timing</td><td>' + esc(data.shift || 'General Shift') + '</td></tr>' +
+        '<tr><td class="lbl">Employee Type</td><td>' + esc(data.engagement || 'On TrooGood Rolls') + (data.vendor ? ' (Contractor: ' + esc(data.vendor) + ')' : '') + '</td></tr>' +
       '</table>' +
     '</div>' +
 
@@ -296,35 +309,41 @@ function logToSheet(data, folderUrl, pdfUrl, photoUrl, aadhaarUrl) {
   if (!ss) return;
   var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
   
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      'Timestamp',
-      'Reference ID',
-      'Candidate Name',
-      'Aadhaar Number',
-      'PAN Number',
-      'Bank Account Number',
-      'Bank IFSC Code',
-      'ESIC Number',
-      'Unit',
-      'Role / Designation',
-      'Mobile Number',
-      'Date of Joining',
-      'Drive Subfolder Link',
-      'PDF Application Link',
-      'Passport Photo Link',
-      'Aadhaar Card Link'
-    ]);
-    sheet.getRange(1, 1, 1, 16)
-      .setFontWeight('bold')
-      .setBackground('#00B5E8')
-      .setFontColor('#ffffff');
-  }
-  
-  sheet.appendRow([
+  var headers = [
+    'Timestamp',
+    'Reference ID',
+    'Candidate Name',
+    'Date of Birth',
+    'Aadhaar Number',
+    'PAN Number',
+    'Bank Account Number',
+    'Bank IFSC Code',
+    'ESIC Number',
+    'Unit',
+    'Role / Designation',
+    'Mobile Number',
+    'Date of Joining',
+    'Shift Timing',
+    'Employee Type',
+    'Contractor Name',
+    'Drive Subfolder Link',
+    'PDF Application Link',
+    'Passport Photo Link',
+    'Aadhaar Card Link'
+  ];
+
+  // Automatically update Row 1 headers without touching or deleting any existing candidate data
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(1, 1, 1, headers.length)
+    .setFontWeight('bold')
+    .setBackground('#00B5E8')
+    .setFontColor('#ffffff');
+
+  var newRow = [
     new Date(),
     data.reference || '',
     data.name || '',
+    data.dob || '',
     data.aadhaar || '',
     data.pan || '',
     data.account || '',
@@ -334,11 +353,50 @@ function logToSheet(data, folderUrl, pdfUrl, photoUrl, aadhaarUrl) {
     data.desig || '',
     data.mobile || '',
     data.doj || '',
+    data.shift || 'General Shift',
+    data.engagement || 'On TrooGood Rolls',
+    data.vendor || 'N/A',
     folderUrl || '',
     pdfUrl || '',
     photoUrl || '',
     aadhaarUrl || ''
-  ]);
+  ];
+
+  var lastRow = sheet.getLastRow();
+  var existingRowIndex = -1;
+
+  if (lastRow > 1) {
+    var dataRange = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+    var cleanAadhaar = (data.aadhaar || '').toString().replace(/\s+/g, '');
+    var cleanRef = (data.reference || '').toString().trim();
+    var cleanMobile = (data.mobile || '').toString().trim();
+    var cleanName = (data.name || '').toString().trim().toLowerCase();
+
+    for (var i = 0; i < dataRange.length; i++) {
+      var row = dataRange[i];
+      var rowRef = (row[1] || '').toString().trim();
+      var rowName = (row[2] || '').toString().trim().toLowerCase();
+      var rowAadhaar = (row[4] || '').toString().replace(/\s+/g, '');
+      var rowMobile = (row[11] || '').toString().trim();
+
+      var matchAadhaar = (cleanAadhaar.length >= 10 && cleanAadhaar === rowAadhaar);
+      var matchRef = (cleanRef.length > 0 && cleanRef === rowRef);
+      var matchMobileName = (cleanMobile.length >= 10 && cleanMobile === rowMobile && cleanName === rowName);
+
+      if (matchAadhaar || matchRef || matchMobileName) {
+        existingRowIndex = i + 2;
+        break;
+      }
+    }
+  }
+
+  if (existingRowIndex > 1) {
+    // Candidate already exists -> UPDATE existing row in place instead of creating duplicate
+    sheet.getRange(existingRowIndex, 1, 1, newRow.length).setValues([newRow]);
+  } else {
+    // Candidate is new -> APPEND new row
+    sheet.appendRow(newRow);
+  }
 }
 
 /** Optional email alert */

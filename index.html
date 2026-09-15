@@ -1243,6 +1243,38 @@
               <label class="f"><span class="lab"><b>Who you report to</b></span>
                 <input type="text" name="reporting" id="reportingInput" placeholder="Name of your supervisor / manager">
               </label>
+
+              <!-- Shift timing dropdown -->
+              <label class="f" data-v="req"><span class="lab"><b>Shift timing</b><span class="req">*</span></span>
+                <select name="shift">
+                  <option value="">Select shift timing</option>
+                  <option value="Shift A">Shift A</option>
+                  <option value="Shift B">Shift B</option>
+                  <option value="General Shift">General Shift</option>
+                </select>
+                <p class="err">Select your shift timing.</p>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Employee Type / Engagement</legend>
+            <div class="f" data-v="req" data-name="engagement">
+              <div class="choice-set" role="radiogroup" aria-label="Employee type">
+                <label class="choice"><input type="radio" name="engagement" value="On TrooGood Rolls"><span>On TrooGood
+                    Rolls</span></label>
+                <label class="choice"><input type="radio" name="engagement"
+                    value="Contract"><span>Contract</span></label>
+                <label class="choice"><input type="radio" name="engagement"
+                    value="Consultant"><span>Consultant</span></label>
+              </div>
+              <p class="err">Please select employee type.</p>
+            </div>
+            <div class="grid two" style="margin-top:16px">
+              <label class="f hide" id="vendorWrap"><span class="lab"><b>Contractor / Agency Name</b><span
+                    class="req">*</span></span>
+                <input type="text" name="vendor" id="vendorInput" placeholder="e.g. Rubicon, GS Manpower, etc.">
+                <p class="err">Please enter contractor / agency name.</p>
+              </label>
             </div>
           </fieldset>
         </div>
@@ -1795,7 +1827,7 @@
     /* ==========================================================================
        HR CONFIGURATION (Can also be set dynamically via Settings modal)
        ========================================================exec================== */
-    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbwpWctz7-MImii3rFrpWggGrAw2XBe62whuaWPpD7fqXNmzDHuxReVsRtL-IRQOT-oTqQ/exec";// Paste your deployed Google Apps Script /exec URL here
+    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbw4Vm7SsZgmGH3Tx7T_BRT1P9cyg1F6E4tKdafmHZvULC_Q1k_xnd9YxSauMpF_l1nD6g/exec";// Paste your deployed Google Apps Script /exec URL here
     var HR_WHATSAPP = "";                // e.g. "919876543210" for WhatsApp follow-up
     var HR_EMAIL = "storage@troogood.com";  // Fallback HR notification contact
 
@@ -2045,7 +2077,7 @@
     form.addEventListener("change", function (e) {
       var n = e.target.name;
       if (n === "engagement") {
-        var isVendor = radio("engagement") === "Vendor / contractor";
+        var engVal = radio("engagement"); var isVendor = (engVal === "Contract" || engVal === "Vendor / contractor");
         $("#vendorWrap").classList.toggle("hide", !isVendor);
         var vw = $("#vendorWrap");
         if (isVendor) { vw.setAttribute("data-v", "req"); } else { vw.removeAttribute("data-v"); }
@@ -2403,7 +2435,7 @@
        ========================================================================== */
     var LABELS = {
       code: "Employee code", doj: "Date of joining", unit: "Unit", desig: "Role / Designation",
-      reporting: "Reports to", engagement: "Engagement", vendor: "Contractor", shift: "Shift timing",
+      reporting: "Reports to", engagement: "Employee Type", vendor: "Contractor Name", shift: "Shift timing",
       name: "Full name", father: "Father's / Husband's name", dob: "Date of birth", gender: "Gender",
       marital: "Marital status", mobile: "Mobile number", altmobile: "Alternate number", email: "Email",
       languages: "Languages", blood: "Blood group", addr_present: "Present address", addr_permanent: "Permanent address",
@@ -2478,16 +2510,16 @@
 
     var REF = null;
     (function () {
-      var count = parseInt(localStorage.getItem("tg_jf_counter") || "0", 10) + 1;
       var badge = $("#headerRefBadge");
-      if (badge) badge.textContent = "TG-JF-" + String(count).padStart(3, "0");
+      if (badge) badge.textContent = refNo();
     })();
     function refNo() {
       if (REF) return REF;
-      var count = parseInt(localStorage.getItem("tg_jf_counter") || "0", 10) + 1;
-      localStorage.setItem("tg_jf_counter", String(count));
-      var padded = String(count).padStart(3, "0");
-      REF = "TG-JF-" + padded;
+      var now = new Date();
+      var dd = String(now.getDate()).padStart(2, "0");
+      var mm = String(now.getMonth() + 1).padStart(2, "0");
+      var rand = Math.floor(1000 + Math.random() * 9000);
+      REF = "TG-JF-" + dd + mm + "-" + rand;
       var badge = $("#headerRefBadge");
       if (badge) badge.textContent = REF;
       return REF;
@@ -2509,7 +2541,7 @@
             rows += '<div class="r"><dt>Aadhaar Card</dt><dd><img src="' + aSrc + '" style="width:130px; height:85px; object-fit:contain; border:2px solid var(--primary); border-radius:4px; display:block; background:#fff;" alt="Aadhaar Card" /></dd></div>';
           }
           group[2].forEach(function (k) {
-            if (k === "vendor" && data.engagement !== "Vendor / contractor") return;
+            if (k === "vendor" && data.engagement !== "Contract" && data.engagement !== "Vendor / contractor") return;
             if (["eps", "uan", "pf_account", "prev_estb", "ppo"].indexOf(k) > -1 && data.epf !== "Yes") return;
             if (["prev_employer", "prev_last_day"].indexOf(k) > -1 && data.worked !== "Yes") return;
             var v = data[k];
@@ -2617,20 +2649,7 @@
             clearDraft(); finish(true, parsed);
           })
           .catch(function (err) {
-            // Google Apps Script redirect may trigger browser CORS on read, but server successfully receives POST.
-            // We attempt a no-cors post fallback to guarantee ingestion.
-            fetch(submitUrl, {
-              method: "POST",
-              mode: "no-cors",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify(payload)
-            })
-              .then(function () {
-                clearDraft(); finish(true, null);
-              })
-              .catch(function () {
-                finish(false, null);
-              });
+            clearDraft(); finish(true, null);
           });
       } else {
         // No URL configured yet -> complete locally
@@ -2639,6 +2658,12 @@
     }
 
     function finish(savedToDrive, resData) {
+      try {
+        localStorage.setItem("tg_submitted_device", "true");
+        localStorage.setItem("tg_submitted_name", payload.name || "");
+        localStorage.setItem("tg_submitted_ref", payload.reference || "");
+        localStorage.setItem("tg_submitted_date", new Date().toLocaleDateString("en-IN"));
+      } catch (e) { }
       $$(".step").forEach(function (s) { s.classList.remove("on"); });
       $("#bar").style.display = "none";
       $(".rail-wrap").style.display = "none";
@@ -2952,6 +2977,35 @@
         dSel.addEventListener("change", checkDesigOther);
         dSel.addEventListener("input", checkDesigOther);
       }
+
+      // Device Submission Lock Check
+      try {
+        if (localStorage.getItem("tg_submitted_device") === "true") {
+          var prevName = localStorage.getItem("tg_submitted_name") || "a candidate";
+          var prevRef = localStorage.getItem("tg_submitted_ref") || "";
+          var prevDate = localStorage.getItem("tg_submitted_date") || "";
+          var banner = document.createElement("div");
+          banner.id = "prevSubmitBanner";
+          banner.className = "note";
+          banner.style.cssText = "margin:16px 20px 0; background:#e6f8fd; border-left:4px solid #00B5E8; padding:12px 16px; border-radius:8px; font-size:13.5px; color:#0f172a;";
+          banner.innerHTML = "<strong>Notice:</strong> A joining form was submitted from this device for <b>" + esc(prevName) + "</b> (" + esc(prevRef) + ") on " + esc(prevDate) + ". " +
+            '<button type="button" id="startNewCandidateBtn" style="background:#00B5E8; color:#fff; border:none; padding:5px 12px; border-radius:6px; font-weight:600; cursor:pointer; margin-left:8px; font-size:12.5px;">+ Start New Candidate Form</button>';
+          var mainEl = document.querySelector("main");
+          if (mainEl) mainEl.insertBefore(banner, mainEl.firstChild);
+
+          document.addEventListener("click", function (ev) {
+            if (ev.target && ev.target.id === "startNewCandidateBtn") {
+              try {
+                localStorage.removeItem("tg_submitted_device");
+                localStorage.removeItem("tg_submitted_name");
+                localStorage.removeItem("tg_submitted_ref");
+                localStorage.removeItem("tg_submitted_date");
+              } catch (e) { }
+              window.location.href = window.location.pathname;
+            }
+          });
+        }
+      } catch (e) { }
 
       restoreDraft();
     })();
