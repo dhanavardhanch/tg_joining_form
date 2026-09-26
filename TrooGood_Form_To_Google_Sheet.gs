@@ -298,7 +298,7 @@ function logToSubmissionsSheet(sheet, data, folderUrl, pdfUrl, photoUrl, aadhaar
     data.name || '',                                      // C: Name
     data.unit || '',                                      // D: Unit
     data.desig || '',                                     // E: Designation
-    data.salary || 'N/A',                                 // F: Salary
+    data.salary || 'NA',                                  // F: Salary
     textCell(data.mobile),                                // G: Mobile Number
     data.doj || '',                                       // H: Date of Joining
     textCell(data.aadhaar),                               // I: Aadhaar Number
@@ -420,7 +420,7 @@ function logToCompleteDataSheet(sheet, data, folderUrl, pdfUrl, pfPdfUrl, photoU
     data.code || 'Auto-allotted',
     data.unit || '',
     data.desig || '',
-    data.salary || 'N/A',
+    data.salary || 'NA',
     data.doj || '',
     data.reporting || 'N/A',
     data.shift || 'General Shift',

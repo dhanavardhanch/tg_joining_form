@@ -1255,11 +1255,8 @@
                 <p class="err">Select your shift timing.</p>
               </label>
 
-              <!-- Monthly Gross Salary -->
-              <label class="f"><span class="lab"><b>Monthly Gross Salary (₹)</b></span>
-                <input type="number" name="salary" class="mono" placeholder="e.g. 18000 — as offered">
-                <p class="hint">Enter monthly pay structure if communicated by HR.</p>
-              </label>
+              <!-- Monthly Gross Salary (Hidden: Auto-fills NA in Sheet) -->
+              <input type="hidden" name="salary" value="NA">
             </div>
           </fieldset>
           <fieldset>
@@ -2487,7 +2484,7 @@
     };
 
     var GROUPS = [
-      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "desig_title", "salary", "reporting", "engagement", "vendor", "shift"]],
+      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "desig_title", "reporting", "engagement", "vendor", "shift"]],
       ["Personal & Contact", 1, ["name", "father", "dob", "gender", "marital", "mobile", "altmobile", "email", "languages", "blood", "addr_present", "addr_permanent", "emg_name", "emg_rel", "emg_mobile"]],
       ["Bank & Identification", 2, ["aadhaar", "pan", "bank", "account", "ifsc", "docs"]],
       ["Provident Fund & Social Security", 3, ["worked", "prev_employer", "prev_last_day", "epf", "eps", "uan", "esic", "health_ins", "health_ins_no"]],
@@ -2513,7 +2510,7 @@
         out.desig = titleVal;
       }
 
-      out.salary = val("salary") || "N/A";
+      out.salary = "NA";
       out.gender = radio("gender") || "Not specified";
 
       // Special handling for Health Insurance: if not Yes, ensure NA
