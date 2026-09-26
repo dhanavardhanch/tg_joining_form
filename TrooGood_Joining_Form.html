@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--
   TrooGood / Mformillet Foods Pvt Ltd — Employee Data Submission Form
   ==========================================================================
@@ -1325,28 +1325,31 @@
             </div>
           </fieldset>
           <fieldset>
-            <div class="grid two">
-              <label class="f wide" data-v="name"><span class="lab"><b>Candidate Full Name (Your Name)</b><span
-                    class="req">*</span></span>
+            <legend>Candidate Identity</legend>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <label class="f" data-v="name">
+                <span class="lab" style="font-size:14.5px;">
+                  <b>Full Name (Enter EXACT Name as printed on Aadhaar Card)</b><span class="req">*</span>
+                </span>
                 <input type="text" name="name" id="candidateNameInput" autocomplete="name"
-                  placeholder="e.g. Dhana Vardhan (Enter your Name, NOT Aadhaar number)">
-                <p class="hint">Enter your actual personal name (letters only). Matches name spelling on your Aadhaar
-                  card.</p>
-                <p class="err">Please enter your actual name in letters (e.g. 'Dhana Vardhan'). Do not enter numbers.
+                  placeholder="Enter exact full name as printed on your Aadhaar Card">
+                <p class="hint" style="color:#0284c7; font-weight:700; margin-top:4px;">
+                  ⚠️ <b>IMPORTANT:</b> Please fill the exact name as printed on your Aadhaar card.
                 </p>
+                <p class="err">Please enter your actual name matching your Aadhaar card.</p>
               </label>
-              <label class="f" data-v="req"><span class="lab"><b>Father's or husband's name</b><span
-                    class="req">*</span></span>
-                <input type="text" name="father" placeholder="Father's or Husband's full name">
-                <p class="err">Enter father's or husband's name.</p>
-              </label>
-              <label class="f" data-v="dob"><span class="lab"><b>Date of birth</b><span class="req">*</span></span>
+
+              <label class="f" data-v="dob">
+                <span class="lab" style="font-size:14.5px;">
+                  <b>Enter your Date of Birth</b><span class="req">*</span>
+                </span>
                 <input type="date" name="dob">
-                <p class="hint" id="ageOut"></p>
+                <p class="hint" id="ageOut" style="margin-top:4px;"></p>
                 <p class="err">Enter your date of birth. You must be 18 or older to join.</p>
               </label>
             </div>
           </fieldset>
+
           <fieldset>
             <legend>Gender</legend>
             <div class="f" data-v="req" data-name="gender">
@@ -1357,6 +1360,7 @@
               <p class="err">Please select your gender.</p>
             </div>
           </fieldset>
+
           <fieldset>
             <legend>Marital status</legend>
             <div class="f" data-v="req" data-name="marital">
@@ -1370,6 +1374,15 @@
               </div>
               <p class="err">Please select your marital status.</p>
             </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Father's / Husband's Details</legend>
+            <label class="f" data-v="req">
+              <span class="lab"><b>Father's or husband's name</b><span class="req">*</span></span>
+              <input type="text" name="father" placeholder="Father's or Husband's full name">
+              <p class="err">Enter father's or husband's name.</p>
+            </label>
           </fieldset>
           <fieldset>
             <legend>Contact Information</legend>
@@ -1702,11 +1715,31 @@
             <p class="small">Statutory undertaking under EPFO Form 11 guidelines.</p>
           </div>
 
-          <div class="dec pf hide" id="pfExclude"><label class="check"><input type="checkbox" name="dec_pf_exclude">
-              <span><b>Excluded Employee PF Exemption:</b> I have never been an EPF/EPS member, hold no UAN, and my
-                monthly pay exceeds the statutory wage threshold (₹15,000/month). I request exclusion from PF
-                cover.</span></label>
-            <p class="small">Subject to HR verification of salary structure against the statutory wage ceiling.</p>
+          <!-- Prominent PF Exemption Declaration Card -->
+          <div class="dec pf" id="pfExclude"
+            style="background:#f0f9ff; border:2.5px solid #00B5E8; border-radius:12px; padding:18px 20px; margin-top:22px; box-shadow:0 4px 14px rgba(0,181,232,0.15);">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+              <span style="background:#00B5E8; color:#ffffff; font-size:11px; font-weight:800; padding:4px 10px; border-radius:999px; text-transform:uppercase; letter-spacing:0.06em;">
+                ⭐ Statutory PF Exemption Option
+              </span>
+              <span style="font-size:11.5px; color:#0284c7; font-weight:700;">(Excluded Employee Declaration)</span>
+            </div>
+
+            <label class="check" style="align-items:flex-start; cursor:pointer;">
+              <input type="checkbox" name="dec_pf_exclude" style="width:22px; height:22px; margin-top:2px; accent-color:#00B5E8;">
+              <span style="margin-left:4px;">
+                <b style="font-size:15px; color:#0f172a; display:block; margin-bottom:6px;">
+                  ☑️ Excluded Employee PF Exemption Request
+                </b>
+                <span style="font-size:13.5px; color:#334155; line-height:1.55; display:block;">
+                  I hereby declare that I have <b>never held an EPF/EPS membership or UAN</b>, and my monthly pay exceeds the statutory wage ceiling (₹15,000/month). I voluntarily request <b>full exemption from PF deduction</b> under Paragraph 2(f) of the EPF Scheme, 1952.
+                </span>
+              </span>
+            </label>
+
+            <div style="margin-top:12px; margin-left:30px; padding:10px 14px; background:#ffffff; border:1px solid #bae6fd; border-radius:8px; font-size:12.5px; color:#0369a1; display:flex; align-items:center; gap:8px;">
+              <span>📄 <b>Note:</b> Checking this box will automatically generate a dedicated, signed <b>PF Exemption Undertaking PDF</b> for your HR compliance records.</span>
+            </div>
           </div>
 
           <fieldset style="margin-top:28px">
@@ -1857,7 +1890,7 @@
     /* ==========================================================================
        HR CONFIGURATION (Can also be set dynamically via Settings modal)
        ========================================================exec================== */
-    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzih6btggwplv3AgRVEBoaWvC5u35VAnZGcQLfaB-nM6XeCSOl7MxeIM1S1mtFBoN_MPQ/exec";
+    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbxacN7E7xgGQAwP4tybzzmjVDLuM7GErzW2FHfLeJ9XaYQosjF1T-cPrISficsRpdHE4w/exec";
     var HR_WHATSAPP = "";                // e.g. "919876543210" for WhatsApp follow-up
     var HR_EMAIL = "sunaina@troogood.com";  // Fallback HR notification contact
 
