@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--
   TrooGood / Mformillet Foods Pvt Ltd — Employee Data Submission Form
   ==========================================================================
@@ -1254,6 +1254,12 @@
                 </select>
                 <p class="err">Select your shift timing.</p>
               </label>
+
+              <!-- Monthly Gross Salary -->
+              <label class="f"><span class="lab"><b>Monthly Gross Salary (₹)</b></span>
+                <input type="number" name="salary" class="mono" placeholder="e.g. 18000 — as offered">
+                <p class="hint">Enter monthly pay structure if communicated by HR.</p>
+              </label>
             </div>
           </fieldset>
           <fieldset>
@@ -1775,6 +1781,13 @@
           </span>
         </div>
 
+        <div style="margin:20px 0 16px;">
+          <button type="button" class="btn primary" id="nextEmployeeBtn"
+            style="padding:12px 28px; font-size:15px; font-weight:700; width:100%; max-width:320px; box-shadow:0 4px 14px rgba(0,181,232,0.3); margin:0 auto; display:inline-flex;">
+            + Onboard Next Employee
+          </button>
+        </div>
+
         <div class="acts">
           <button type="button" class="btn ghost" id="dlBtn">
             📥 Download Local Form Backup
@@ -1809,7 +1822,9 @@
 
       <label class="f" style="margin-bottom:16px;">
         <span class="lab"><b>Google Apps Script Web App URL:</b></span>
-        <input type="text" id="cfgUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="mono">
+        <input type="text" id="cfgUrlInput"
+          placeholder="https://script.google.com/macros/s/AKfycbzih6btggwplv3AgRVEBoaWvC5u35VAnZGcQLfaB-nM6XeCSOl7MxeIM1S1mtFBoN_MPQ/exec"
+          class="mono">
         <p class="hint">Deploy "TrooGood_Form_To_Google_Sheet.gs" as a Web App (Access: Anyone) and paste its URL here.
         </p>
       </label>
@@ -1821,15 +1836,33 @@
     </div>
   </div>
 
+  <!-- Modal: Early Duplicate Warning -->
+  <div class="modal-backdrop" id="dupModal" role="dialog" aria-modal="true" aria-labelledby="dupTitle">
+    <div class="modal-card" style="border-top:4px solid #f59e0b;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span style="font-size:26px;">⚠️</span>
+        <h3 id="dupTitle" style="margin:0; font-size:18px; color:#92400e;">Existing Record Found</h3>
+      </div>
+      <p id="dupMsg" style="font-size:13.5px; color:#334155; line-height:1.55; margin-bottom:20px;"></p>
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" class="btn ghost" id="dupClearBtn" style="font-size:13.5px; padding:10px 18px;">Change /
+          Enter New Number</button>
+        <button type="button" class="btn primary" id="dupDismissBtn"
+          style="font-size:13.5px; padding:10px 18px; background:#f59e0b; border-color:#f59e0b; flex:0 0 auto;">Dismiss
+          Warning</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     "use strict";
 
     /* ==========================================================================
        HR CONFIGURATION (Can also be set dynamically via Settings modal)
        ========================================================exec================== */
-    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzmFpIIj-zMZGNFYbUj28FJ7eK7dOTIiZYhv8AIrFx4qpAD2MiBu7EhmDvemNe3NB7oJw/exec";// Paste your deployed Google Apps Script /exec URL here
+    var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzih6btggwplv3AgRVEBoaWvC5u35VAnZGcQLfaB-nM6XeCSOl7MxeIM1S1mtFBoN_MPQ/exec";
     var HR_WHATSAPP = "";                // e.g. "919876543210" for WhatsApp follow-up
-    var HR_EMAIL = "storage@troogood.com";  // Fallback HR notification contact
+    var HR_EMAIL = "sunaina@troogood.com";  // Fallback HR notification contact
 
     /* ==========================================================================
        DOM & FORM STATE
@@ -2181,8 +2214,11 @@
           canvas.width = w;
           canvas.height = h;
           var ctx2 = canvas.getContext("2d");
+          ctx2.imageSmoothingEnabled = true;
+          ctx2.imageSmoothingQuality = "high";
           ctx2.drawImage(img, 0, 0, w, h);
-          var compressedUrl = canvas.toDataURL("image/jpeg", 0.85);
+          // High definition quality (0.92) to preserve crystal-clear text on Aadhaar cards
+          var compressedUrl = canvas.toDataURL("image/jpeg", 0.92);
           callback(compressedUrl);
         };
         img.src = evt.target.result;
@@ -2194,7 +2230,7 @@
     function handlePhotoUpload(e) {
       var file = e.target.files && e.target.files[0];
       if (!file) return;
-      processImageFile(file, 360, 450, function (url) {
+      processImageFile(file, 1200, 1500, function (url) {
         photoDataUrl = url;
         if (photoImg) { photoImg.src = url; photoImg.classList.remove("hide"); }
         if (photoPlaceholder) { photoPlaceholder.classList.add("hide"); }
@@ -2230,7 +2266,7 @@
     function handleAadhaarUpload(e) {
       var file = e.target.files && e.target.files[0];
       if (!file) return;
-      processImageFile(file, 900, 600, function (url) {
+      processImageFile(file, 2400, 1800, function (url) {
         aadhaarDataUrl = url;
         if (aadhaarImg) { aadhaarImg.src = url; aadhaarImg.classList.remove("hide"); }
         if (aadhaarPlaceholder) { aadhaarPlaceholder.classList.add("hide"); }
@@ -2436,6 +2472,7 @@
     var LABELS = {
       code: "Employee code", doj: "Date of joining", unit: "Unit", desig: "Role / Designation",
       reporting: "Reports to", engagement: "Employee Type", vendor: "Contractor Name", shift: "Shift timing",
+      salary: "Monthly Gross Salary (₹)",
       name: "Full name", father: "Father's / Husband's name", dob: "Date of birth", gender: "Gender",
       marital: "Marital status", mobile: "Mobile number", altmobile: "Alternate number", email: "Email",
       languages: "Languages", blood: "Blood group", addr_present: "Present address", addr_permanent: "Permanent address",
@@ -2450,7 +2487,7 @@
     };
 
     var GROUPS = [
-      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "desig_title", "reporting", "engagement", "vendor", "shift"]],
+      ["Your Job Details", 0, ["code", "doj", "unit", "desig", "desig_title", "salary", "reporting", "engagement", "vendor", "shift"]],
       ["Personal & Contact", 1, ["name", "father", "dob", "gender", "marital", "mobile", "altmobile", "email", "languages", "blood", "addr_present", "addr_permanent", "emg_name", "emg_rel", "emg_mobile"]],
       ["Bank & Identification", 2, ["aadhaar", "pan", "bank", "account", "ifsc", "docs"]],
       ["Provident Fund & Social Security", 3, ["worked", "prev_employer", "prev_last_day", "epf", "eps", "uan", "esic", "health_ins", "health_ins_no"]],
@@ -2475,6 +2512,9 @@
       if (titleVal) {
         out.desig = titleVal;
       }
+
+      out.salary = val("salary") || "N/A";
+      out.gender = radio("gender") || "Not specified";
 
       // Special handling for Health Insurance: if not Yes, ensure NA
       if (out.health_ins === "Yes") {
@@ -2644,8 +2684,17 @@
             var parsed = null;
             try {
               parsed = JSON.parse(text);
-              if (parsed.reference) payload.reference = parsed.reference;
+              if (parsed && parsed.reference) payload.reference = parsed.reference;
             } catch (e) { }
+
+            if (parsed && parsed.ok === false) {
+              nextBtn.disabled = false;
+              nextBtn.textContent = "Submit";
+              submitted = false;
+              alert(parsed.message || parsed.error || "Submission could not be completed.");
+              return;
+            }
+
             clearDraft(); finish(true, parsed);
           })
           .catch(function (err) {
@@ -2658,6 +2707,9 @@
     }
 
     function finish(savedToDrive, resData) {
+      if (resData && resData.reference) {
+        payload.reference = resData.reference;
+      }
       try {
         localStorage.setItem("tg_submitted_device", "true");
         localStorage.setItem("tg_submitted_name", payload.name || "");
@@ -3006,6 +3058,114 @@
           });
         }
       } catch (e) { }
+
+      // Next Employee Action Listener
+      var nextEmpBtn = document.getElementById("nextEmployeeBtn");
+      if (nextEmpBtn) {
+        nextEmpBtn.addEventListener("click", function () {
+          if (confirm("Start onboarding for the next employee? Current submission is securely saved.")) {
+            clearDraft();
+            try {
+              localStorage.removeItem("tg_submitted_device");
+              localStorage.removeItem("tg_submitted_name");
+              localStorage.removeItem("tg_submitted_ref");
+              localStorage.removeItem("tg_submitted_date");
+            } catch (e) { }
+            window.location.href = window.location.pathname;
+          }
+        });
+      }
+
+      // Early Duplicate Checking & Modal Handling
+      var dupModal = document.getElementById("dupModal");
+      var dupMsg = document.getElementById("dupMsg");
+      var dupClearBtn = document.getElementById("dupClearBtn");
+      var dupDismissBtn = document.getElementById("dupDismissBtn");
+      var currentDupTargetInput = null;
+
+      function showDuplicateModal(type, res, inputEl) {
+        if (!dupModal || !dupMsg) return;
+        currentDupTargetInput = inputEl;
+        var fieldLabel = (type === "mobile") ? "Mobile Number" : "Aadhaar Card Number";
+        dupMsg.innerHTML = "This <b>" + fieldLabel + "</b> is already registered in TrooGood records for:<br><br>" +
+          "• <b>Candidate Name:</b> " + esc(res.name || "Existing Candidate") + "<br>" +
+          "• <b>Reference ID:</b> <span class='mono' style='font-weight:700; color:#0284c7;'>" + esc(res.reference || "") + "</span><br>" +
+          (res.date ? "• <b>Registered Date:</b> " + esc(res.date) + "<br><br>" : "<br>") +
+          "<i>If this was a typo or you are entering details for a different person, click below to change this number.</i>";
+        dupModal.classList.add("open");
+      }
+
+      if (dupClearBtn) {
+        dupClearBtn.addEventListener("click", function () {
+          if (currentDupTargetInput) {
+            currentDupTargetInput.value = "";
+            currentDupTargetInput.focus();
+          }
+          if (dupModal) dupModal.classList.remove("open");
+        });
+      }
+
+      if (dupDismissBtn) {
+        dupDismissBtn.addEventListener("click", function () {
+          if (dupModal) dupModal.classList.remove("open");
+        });
+      }
+
+      var lastCheckedMobile = "";
+      var lastCheckedAadhaar = "";
+
+      function checkDuplicateEarly(type, rawVal, inputEl) {
+        var submitUrl = (SUBMIT_URL || localStorage.getItem("troogood_submit_url") || "").trim();
+        if (!submitUrl || !rawVal) return;
+        var cleanVal = rawVal.replace(/\D/g, "");
+        if (type === "mobile" && cleanVal.length !== 10) return;
+        if (type === "aadhaar" && cleanVal.length !== 12) return;
+
+        if (type === "mobile") {
+          if (cleanVal === lastCheckedMobile) return;
+          lastCheckedMobile = cleanVal;
+        }
+        if (type === "aadhaar") {
+          if (cleanVal === lastCheckedAadhaar) return;
+          lastCheckedAadhaar = cleanVal;
+        }
+
+        var q = submitUrl + (submitUrl.indexOf("?") > -1 ? "&" : "?") + "action=checkDuplicate&" +
+          (type === "mobile" ? "mobile=" + encodeURIComponent(cleanVal) : "aadhaar=" + encodeURIComponent(cleanVal));
+
+        fetch(q)
+          .then(function (r) { return r.json(); })
+          .then(function (res) {
+            if (res && res.exists) {
+              showDuplicateModal(type, res, inputEl);
+            }
+          })
+          .catch(function () { });
+      }
+
+      var mobInput = form.querySelector('input[name="mobile"]');
+      if (mobInput) {
+        mobInput.addEventListener("blur", function () {
+          checkDuplicateEarly("mobile", mobInput.value, mobInput);
+        });
+        mobInput.addEventListener("input", function () {
+          if (mobInput.value.replace(/\D/g, "").length === 10) {
+            checkDuplicateEarly("mobile", mobInput.value, mobInput);
+          }
+        });
+      }
+
+      var aadhaarInput = form.querySelector('input[name="aadhaar"]');
+      if (aadhaarInput) {
+        aadhaarInput.addEventListener("blur", function () {
+          checkDuplicateEarly("aadhaar", aadhaarInput.value, aadhaarInput);
+        });
+        aadhaarInput.addEventListener("input", function () {
+          if (aadhaarInput.value.replace(/\D/g, "").length === 12) {
+            checkDuplicateEarly("aadhaar", aadhaarInput.value, aadhaarInput);
+          }
+        });
+      }
 
       restoreDraft();
     })();
